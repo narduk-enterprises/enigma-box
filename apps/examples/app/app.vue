@@ -28,7 +28,7 @@ watch(route, () => {
   <UApp>
     <div class="app-shell min-h-screen flex flex-col">
       <!-- Header -->
-      <header class="sticky top-0 z-50 border-b border-default bg-default/80 backdrop-blur-xl">
+      <div class="sticky top-0 z-50 border-b border-default bg-default/80 backdrop-blur-xl">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <NuxtLink to="/" class="flex items-center gap-2.5 group">
             <div class="size-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-sm">
@@ -38,7 +38,7 @@ watch(route, () => {
           </NuxtLink>
 
           <!-- Desktop nav -->
-          <nav class="hidden md:flex items-center gap-1">
+          <div class="hidden md:flex items-center gap-1">
             <NuxtLink
               v-for="item in navItems"
               :key="item.to"
@@ -50,7 +50,7 @@ watch(route, () => {
             >
               {{ item.label }}
             </NuxtLink>
-          </nav>
+          </div>
 
           <div class="flex items-center gap-2">
             <USwitch
@@ -69,7 +69,7 @@ watch(route, () => {
 
         <!-- Mobile nav -->
         <Transition name="slide-down">
-          <nav v-if="mobileMenuOpen" class="md:hidden border-t border-default px-4 py-3 space-y-1">
+          <div v-if="mobileMenuOpen" class="md:hidden border-t border-default px-4 py-3 space-y-1">
             <NuxtLink
               v-for="item in navItems"
               :key="item.to"
@@ -82,25 +82,25 @@ watch(route, () => {
               <UIcon :name="item.icon" class="size-4" />
               {{ item.label }}
             </NuxtLink>
-          </nav>
+          </div>
         </Transition>
-      </header>
+      </div>
 
       <!-- Main -->
-      <main class="flex-1">
+      <div class="flex-1">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <NuxtPage />
         </div>
-      </main>
+      </div>
 
       <!-- Footer -->
-      <footer class="border-t border-default py-6">
+      <div class="border-t border-default py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p class="text-center text-sm text-muted">
             Nuxt 4 Demo Template &middot; Nuxt UI 4 &middot; Cloudflare Workers &middot; {{ new Date().getFullYear() }}
           </p>
         </div>
-      </footer>
+      </div>
     </div>
   </UApp>
 </template>

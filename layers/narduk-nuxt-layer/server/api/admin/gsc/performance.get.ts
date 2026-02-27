@@ -40,7 +40,7 @@ export default defineEventHandler(async (event) => {
           rowLimit: 50,
         }),
       },
-    )
+    ) as Record<string, unknown>
 
     const rows = data.rows as Array<Record<string, unknown>> | undefined
 

@@ -40,7 +40,7 @@ export default defineEventHandler(async (event) => {
           dimensions: [{ name: 'date' }],
         }),
       },
-    )
+    ) as Record<string, unknown>
 
     const totals = data.totals as Array<{ metricValues?: Array<{ value: string }> }> | undefined
     const rows = data.rows as Array<Record<string, unknown>> | undefined

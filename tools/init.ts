@@ -56,7 +56,7 @@ if (missingArgs.length > 0) {
 const APP_NAME = args.name as string
 const DISPLAY_NAME = args.display as string
 const SITE_URL = (args.url as string).replace(/\/$/, '') // strip trailing slash
-const REPAIR_MODE = !!args.repair
+let REPAIR_MODE = !!args.repair
 
 // Boilerplate targets to replace
 // Order matters: more-specific patterns must come before less-specific ones
@@ -113,6 +113,16 @@ function getDopplerSecretNames(project: string, config: string): Set<string> {
 // --- execution ---
 
 async function main() {
+  // Auto-detect if already initialized to protect existing projects
+  try {
+    const pkgContent = await fs.readFile(path.join(ROOT_DIR, 'package.json'), 'utf-8')
+    if (!JSON.parse(pkgContent).name.includes('nuxt-v4-template')) {
+      REPAIR_MODE = true
+    }
+  } catch {
+    // Ignore
+  }
+
   console.log(`\n🚀 Initializing: ${DISPLAY_NAME} (${APP_NAME})${REPAIR_MODE ? ' [REPAIR MODE]' : ''}`)
   
   // 1. Recursive String Replacement
@@ -142,86 +152,97 @@ async function main() {
     console.log(`  ✅ Updated ${changedFiles} files.`)
   }
 
-  // 2. Database Provisioning
-  console.log('\nStep 2/8: Provisioning D1 Database...')
-  const dbName = `${APP_NAME}-db`
-  console.log(`  Running: npx wrangler d1 create ${dbName}`)
-  
-  let d1Output = ''
-  try {
-    d1Output = execSync(`npx wrangler d1 create ${dbName}`, { encoding: 'utf-8', stdio: 'pipe' })
-    console.log(`  ✅ Database created: ${dbName}`)
-  } catch (error: any) {
-    const stderr = error.stderr || ''
-    if (stderr.includes('already exists')) {
-      console.log(`  ⏭ Database ${dbName} already exists.`)
-      // Try to fetch existing DB info
-      try {
-        d1Output = execSync(`npx wrangler d1 info ${dbName}`, { encoding: 'utf-8', stdio: 'pipe' })
-      } catch (e: any) {
-        console.error(`  ❌ Failed to fetch info for existing DB: ${e.message}`)
-        process.exit(1)
+  // 2. Database Provisioning (per-app — each app gets its own D1 database)
+  console.log('\nStep 2/8: Provisioning D1 Databases...')
+
+  /**
+   * Provision a D1 database by name. Returns the database_id or null on failure.
+   * Safe to call multiple times — skips if the database already exists.
+   */
+  function provisionD1(name: string): string | null {
+    console.log(`  Running: npx wrangler d1 create ${name}`)
+    let output = ''
+    try {
+      output = execSync(`npx wrangler d1 create ${name}`, { encoding: 'utf-8', stdio: 'pipe' })
+      console.log(`  ✅ Database created: ${name}`)
+    } catch (error: any) {
+      const stderr = error.stderr || ''
+      if (stderr.includes('already exists')) {
+        console.log(`  ⏭ Database ${name} already exists.`)
+        try {
+          output = execSync(`npx wrangler d1 info ${name}`, { encoding: 'utf-8', stdio: 'pipe' })
+        } catch (e: any) {
+          console.error(`  ❌ Failed to fetch info for existing DB ${name}: ${e.message}`)
+          return null
+        }
+      } else {
+        console.error(`  ❌ D1 creation failed for ${name}: ${stderr || error.message}`)
+        console.error('  Are you logged into Wrangler? (npx wrangler login)')
+        return null
       }
-    } else {
-      console.error(`  ❌ D1 creation failed: ${stderr || error.message}`)
-      console.error('  Are you logged into Wrangler? (npx wrangler login)')
-      process.exit(1)
     }
+    // Match both key=value format and wrangler table format (│ DB │ uuid │)
+    const match = output.match(/database_id[=:]\s*"?([a-fA-F0-9-]+)"?/) || output.match(/│\s*DB\s*│\s*([a-fA-F0-9-]+)\s*│/)
+    return match ? match[1] : null
   }
 
-  // 3. Extract DB ID and rewrite wrangler.json in each app
-  console.log('\nStep 3/8: Linking Database to wrangler.json...')
-  // Match both key=value format and wrangler table format (│ DB │ uuid │)
-  const idMatch = d1Output.match(/database_id[=:]\s*"?([a-fA-F0-9-]+)"?/) || d1Output.match(/│\s*DB\s*│\s*([a-fA-F0-9-]+)\s*│/)
-  
-  if (!idMatch) {
-    console.warn(`  ⚠️ Could not parse database_id from Wrangler output.`)
-    console.warn('  You will need to manually update wrangler.json.')
-    console.warn('  Wrangler output was:')
-    console.warn(d1Output)
-  } else {
-    const dbId = idMatch[1]
-    // Find all wrangler.json files in apps/*/
-    const appsDir = path.join(ROOT_DIR, 'apps')
-    let appDirs: string[] = []
-    try {
-      const entries = await fs.readdir(appsDir, { withFileTypes: true })
-      appDirs = entries.filter(e => e.isDirectory()).map(e => e.name)
-    } catch {
-      appDirs = []
-    }
+  // 3. Link each app to its own dedicated D1 database
+  console.log('\nStep 3/8: Linking Databases to wrangler.json...')
+  const appsDir = path.join(ROOT_DIR, 'apps')
+  let appDirs: string[] = []
+  try {
+    const entries = await fs.readdir(appsDir, { withFileTypes: true })
+    appDirs = entries.filter(e => e.isDirectory()).map(e => e.name)
+  } catch {
+    appDirs = []
+  }
 
-    let updatedCount = 0
-    for (const appDir of appDirs) {
-      const wranglerPath = path.join(appsDir, appDir, 'wrangler.json')
-      try {
-        const wranglerContent = await fs.readFile(wranglerPath, 'utf-8')
-        const parsedWrangler = JSON.parse(wranglerContent)
-        
-        if (parsedWrangler.d1_databases && parsedWrangler.d1_databases.length > 0) {
-          parsedWrangler.d1_databases[0].database_id = dbId
+  let updatedCount = 0
+  for (const appDir of appDirs) {
+    const wranglerPath = path.join(appsDir, appDir, 'wrangler.json')
+    try {
+      const wranglerContent = await fs.readFile(wranglerPath, 'utf-8')
+      const parsedWrangler = JSON.parse(wranglerContent)
+
+      // Provision a dedicated D1 database for this app using its declared database_name
+      if (parsedWrangler.d1_databases && parsedWrangler.d1_databases.length > 0) {
+        const declaredDbName = parsedWrangler.d1_databases[0].database_name
+        if (declaredDbName) {
+          const dbId = provisionD1(declaredDbName)
+          if (dbId) {
+            parsedWrangler.d1_databases[0].database_id = dbId
+          } else {
+            console.warn(`  ⚠️ Could not provision DB for apps/${appDir} — manual update required.`)
+          }
         }
-        
+      }
+
+      // Only set custom domains on the primary app (web), not companion apps (examples)
+      if (appDir === 'web') {
         try {
           const urlObj = new URL(SITE_URL)
-          parsedWrangler.routes = [
-            { pattern: urlObj.hostname, custom_domain: true }
-          ]
+          if (!parsedWrangler.routes) {
+            parsedWrangler.routes = []
+          }
+          const existingRoute = parsedWrangler.routes.find((r: any) => r.pattern === urlObj.hostname)
+          if (!existingRoute) {
+            parsedWrangler.routes.push({ pattern: urlObj.hostname, custom_domain: true })
+          }
         } catch (_e) {
           console.warn(`  ⚠️ Could not configure custom domain: Invalid SITE_URL (${SITE_URL})`)
         }
-
-        await fs.writeFile(wranglerPath, JSON.stringify(parsedWrangler, null, 2) + '\n', 'utf-8')
-        updatedCount++
-        console.log(`  ✅ Updated apps/${appDir}/wrangler.json (database_id: ${dbId})`)
-      } catch {
-        // App doesn't have a wrangler.json — skip silently
       }
-    }
 
-    if (updatedCount === 0) {
-      console.warn('  ⚠️ No wrangler.json files found in apps/*/')
+      await fs.writeFile(wranglerPath, JSON.stringify(parsedWrangler, null, 2) + '\n', 'utf-8')
+      updatedCount++
+      console.log(`  ✅ Updated apps/${appDir}/wrangler.json`)
+    } catch {
+      // App doesn't have a wrangler.json — skip silently
     }
+  }
+
+  if (updatedCount === 0) {
+    console.warn('  ⚠️ No wrangler.json files found in apps/*/')
   }
 
   // 4. Reset README
