@@ -95,12 +95,18 @@ If you are an agent building a new project inside a clone of this repository, **
 
 Run these during development (Antigravity slash-commands):
 
-| Workflow                  | Purpose                                             |
-| ------------------------- | --------------------------------------------------- |
-| `/check-nuxt-ui-v4`       | Validates UI 4 component usage                      |
-| `/check-nuxt-ssr`         | Validates SSR-safe data fetching and hydration      |
-| `/check-store-separation` | Validates thin component / thick composable pattern |
-| `/check-nitro-edge`       | Validates Cloudflare Workers compatibility          |
+| Workflow                  | Purpose                                                    |
+| ------------------------- | ---------------------------------------------------------- |
+| `/check-nuxt-ui-v4`       | Validates UI 4 component usage                             |
+| `/check-nuxt-ssr`         | Validates SSR-safe data fetching and hydration             |
+| `/check-store-separation` | Validates thin component / thick composable pattern        |
+| `/check-nitro-edge`       | Validates Cloudflare Workers compatibility                 |
+| `/check-seo-compliance`   | Audits pages for useSeo, Schema.org, and OG images         |
+| `/check-data-fetching`    | Catches waterfalls, raw $fetch, and N+1 queries            |
+| `/check-css-tokens`       | Audits Tailwind v4 import order, tokens, and deprecated    |
+| `/check-plugin-lifecycle` | Audits plugin naming, lifecycle safety, and analytics      |
+| `/check-types-services`   | Audits Thin Store decomposition (types/services/sizes)     |
+| `/check-hydration-safety` | Deep hydration audit (isHydrated, ClientOnly, DOM nesting) |
 
 ---
 

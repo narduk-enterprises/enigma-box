@@ -4,7 +4,6 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     '@nuxt/fonts',
     '@nuxt/image',
-    '@nuxt/content',
     '@nuxtjs/seo',
     '@nuxt/eslint',
   ],
@@ -79,17 +78,7 @@ export default defineNuxtConfig({
     },
   },
 
-  content: {
-    // @nuxt/content v3 — edge-compatible, SQL-based storage
-    build: {
-      markdown: {
-        toc: { depth: 3 },
-        highlight: {
-          langs: ['typescript', 'vue', 'bash', 'json', 'css', 'html'],
-        },
-      },
-    },
-  },
+
 
   sitemap: {},
 
