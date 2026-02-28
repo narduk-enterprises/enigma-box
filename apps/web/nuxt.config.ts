@@ -7,8 +7,6 @@ export default defineNuxtConfig({
     compatibilityVersion: 4
   },
 
-  css: ['~/assets/css/main.css'],
-
   runtimeConfig: {
     // Server-only (admin API routes)
     googleServiceAccountKey: process.env.GSC_SERVICE_ACCOUNT_JSON || '',

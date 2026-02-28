@@ -12,7 +12,7 @@ export default defineNuxtConfig({
     '@nuxtjs/seo',
     '@nuxt/eslint',
   ],
-  css: ['~/assets/css/main.css'],
+  css: [fileURLToPath(new URL('./app/assets/css/main.css', import.meta.url))],
 
   compatibilityDate: '2025-07-15',
 
