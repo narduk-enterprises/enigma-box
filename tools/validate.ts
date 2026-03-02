@@ -34,7 +34,7 @@ async function main() {
   const APP_NAME = packageJson.name
 
   let allGood = true
-  if (!APP_NAME || APP_NAME.includes('narduk-nuxt-template')) {
+  if (!APP_NAME || APP_NAME.includes('enigma-box')) {
     console.error(`  ❌ Project name is still '${APP_NAME}'. Has init been run?`)
     allGood = false
   }
@@ -151,7 +151,7 @@ async function main() {
   try {
     const remotesOutput = execSync('git remote -v', { encoding: 'utf-8', stdio: 'pipe' })
     const remotes = remotesOutput.split('\n').filter(Boolean)
-    const targetRemoteLine = remotes.find(line => !line.includes('narduk-nuxt-template') && line.includes('(push)'))
+    const targetRemoteLine = remotes.find(line => !line.includes('enigma-box') && line.includes('(push)'))
     if (targetRemoteLine) {
       let url = targetRemoteLine.split(/\s+/)[1]
       url = url.replace(/^(https?:\/\/|git@)/, '').replace(/^github\.com[:/]/, '').replace(/\.git$/, '')

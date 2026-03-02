@@ -29,3 +29,32 @@ CREATE TABLE IF NOT EXISTS `todos` (
   `completed` integer DEFAULT false,
   `created_at` text NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS `rooms` (
+  `id` text PRIMARY KEY NOT NULL,
+  `title` text NOT NULL,
+  `description` text,
+  `creator_id` text NOT NULL REFERENCES `users`(`id`) ON DELETE CASCADE,
+  `created_at` text NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS `puzzles` (
+  `id` text PRIMARY KEY NOT NULL,
+  `room_id` text NOT NULL REFERENCES `rooms`(`id`) ON DELETE CASCADE,
+  `sequence_order` integer NOT NULL,
+  `puzzle_type` text NOT NULL,
+  `content` text NOT NULL,
+  `secret_answer_hash` text NOT NULL,
+  `hints` text,
+  `created_at` text NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS `game_sessions` (
+  `id` text PRIMARY KEY NOT NULL,
+  `room_id` text NOT NULL REFERENCES `rooms`(`id`) ON DELETE CASCADE,
+  `player_name` text NOT NULL,
+  `start_time` text NOT NULL,
+  `end_time` text,
+  `current_puzzle_id` text REFERENCES `puzzles`(`id`),
+  `created_at` text NOT NULL
+);
