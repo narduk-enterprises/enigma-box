@@ -52,6 +52,13 @@ async function createRoom() {
           @click="showCreate = true"
         />
         <UButton
+          to="/guide/create"
+          color="neutral"
+          variant="ghost"
+          icon="i-lucide-book-open"
+          label="How to create"
+        />
+        <UButton
           to="/"
           color="neutral"
           variant="ghost"

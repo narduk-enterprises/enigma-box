@@ -40,15 +40,18 @@ export default defineEventHandler(async (event) => {
 
   const firstPuzzle = puzzleList[0]!
   const sessionId = generateId()
+  const startTime = new Date().toISOString()
   await db.insert(gameSessions).values({
     id: sessionId,
     roomId: id,
     playerName: parsed.data.playerName,
     currentPuzzleId: firstPuzzle.id,
+    startTime,
   })
 
   return {
     sessionId,
+    startTime,
     room: { id: room.id, title: room.title, description: room.description },
     puzzle: {
       id: firstPuzzle.id,
