@@ -35,14 +35,14 @@ watch(route, () => {
     <ULink to="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-100 focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg">Skip to content</ULink>
     <div class="app-shell min-h-screen flex flex-col">
       <!-- Header: glass -->
-      <header class="sticky top-0 z-50 glass border-b border-default/50 shadow-card transition-base">
+      <div class="sticky top-0 z-50 glass border-b border-default/50 shadow-card transition-base">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <NuxtLink to="/" class="flex items-center gap-2.5 group">
             <img src="/logo.png" alt="" class="size-8 rounded-lg object-cover" width="32" height="32">
             <span class="font-display font-semibold text-lg hidden sm:block">{{ appName }}</span>
           </NuxtLink>
 
-          <nav class="hidden md:flex items-center gap-1">
+          <div class="hidden md:flex items-center gap-1" role="navigation">
             <NuxtLink
               v-for="item in navItems"
               :key="item.to"
@@ -54,7 +54,7 @@ watch(route, () => {
             >
               {{ item.label }}
             </NuxtLink>
-          </nav>
+          </div>
 
           <div class="flex items-center gap-2">
             <UButton
@@ -86,23 +86,23 @@ watch(route, () => {
             </NuxtLink>
           </div>
         </Transition>
-      </header>
+      </div>
 
-      <main id="main-content" class="flex-1">
+      <div id="main-content" class="flex-1" role="main">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <NuxtLayout>
             <NuxtPage />
           </NuxtLayout>
         </div>
-      </main>
+      </div>
 
-      <footer class="border-t border-default py-6">
+      <div class="border-t border-default py-6" role="contentinfo">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p class="text-center text-sm text-muted">
             {{ appName }} · Nuxt UI 4 · Cloudflare Workers · <NuxtTime :datetime="new Date()" year="numeric" />
           </p>
         </div>
-      </footer>
+      </div>
     </div>
   </UApp>
 </template>
