@@ -1,4 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="6" fill="#10b981"/>
-  <text x="5" y="24" font-family="system-ui, sans-serif" font-size="20" font-weight="bold" fill="white">N4</text>
+  <defs>
+    <linearGradient id="violet" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#5b21b6"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="8" fill="url(#violet)"/>
+  <!-- Stylized box / lock -->
+  <rect x="8" y="10" width="16" height="12" rx="2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <path d="M12 10V8a4 4 0 0 1 8 0v2" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
 </svg>

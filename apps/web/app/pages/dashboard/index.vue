@@ -126,9 +126,10 @@ async function createRoom() {
 
       <ul v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <li
-          v-for="room in rooms"
+          v-for="(room, i) in rooms"
           :key="room.id"
-          class="rounded-lg border border-default bg-default p-4 shadow-card transition-fast"
+          class="card-base p-4 transition-base animate-count-in hover:shadow-elevated"
+          :style="{ animationDelay: `${i * 0.05}s` }"
         >
           <NuxtLink :to="`/dashboard/rooms/${room.id}`" class="block">
             <h3 class="font-semibold text-highlighted">
