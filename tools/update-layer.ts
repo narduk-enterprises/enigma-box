@@ -79,7 +79,8 @@ async function main() {
           pkg.repository.directory = 'layers/narduk-nuxt-layer'
           
           await fs.writeFile(LAYER_PKG_PATH, JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
-          console.log(`  ✅ Updated repository.url to ${originUrl}`)
+          run('git add layers/narduk-nuxt-layer/package.json')
+          console.log(`  ✅ Updated repository.url to ${originUrl} and staged the change`)
         } else {
           console.log('  ⏭ repository.url already matches origin.')
         }
@@ -99,7 +100,7 @@ async function main() {
 
   console.log('\n🎉 Layer update complete!')
   console.log('⚠️  Note: Local layer customizations (if any) have been overwritten.')
-  console.log('    Use `git diff` to review the changes before committing.')
+  console.log('    Layer changes are staged. Run `git diff --cached` to review, then `git commit` when ready.')
 }
 
 main().catch(e => {
