@@ -43,7 +43,7 @@ jobs:
             exit 1
           fi
 
-  # Phase 1: Deploy all example apps in parallel
+  # Phase 1: Build & deploy all example apps in parallel
   deploy-apps:
     name: Deploy ${{ matrix.app }}
     needs: preflight
@@ -102,7 +102,7 @@ jobs:
           pnpm build
           pnpm exec wrangler deploy
 
-  # Phase 2: Deploy showcase AFTER all example apps (it has Service Bindings to them)
+  # Phase 2: Deploy showcase AFTER example apps (it has Service Bindings to them)
   deploy-showcase:
     name: Deploy showcase
     needs: [preflight, deploy-apps]
