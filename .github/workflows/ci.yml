@@ -52,7 +52,7 @@ jobs:
         run: pnpm quality
 
       - name: Unit Tests
-        run: pnpm -r test:unit --if-present
+        run: pnpm -r --if-present test:unit
 
   build:
     name: Build (${{ matrix.app }})
