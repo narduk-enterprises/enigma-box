@@ -25,7 +25,7 @@ This is a **minimal Nuxt 4 + Nuxt UI 4** boilerplate deployed to **Cloudflare Wo
 | **Package**       | A workspace package (`packages/eslint-config/`) — standalone npm packages consumed by apps. Lives in `packages/`.                                                             |
 | **Isolate**       | A Cloudflare Workers V8 isolate — a lightweight, stateless execution environment. Each request may hit a different isolate, so in-memory state is not shared across requests. |
 | **Per-isolate**   | Scoped to a single V8 isolate instance. Per-isolate rate limiting, for example, only tracks requests within one isolate's memory.                                             |
-| **Hub project**   | A Doppler project that stores shared infrastructure secrets (e.g. `narduk-enterprise-apps`). You do NOT create these.                                                         |
+| **Hub project**   | A Doppler project that stores shared infrastructure secrets (e.g. `narduk-nuxt-template`). You do NOT create these.                                                           |
 | **Spoke project** | A Doppler project for a specific app that references hub secrets via cross-project references. Created by `init.ts`.                                                          |
 
 For full-featured example implementations, see the **Showcase** apps in `apps/showcase/`, `apps/example-auth/`, `apps/example-blog/`, `apps/example-marketing/`, `apps/example-og-image/`, and `apps/example-apple-maps/`.
@@ -385,10 +385,10 @@ All template derivatives use **Doppler Cross-Project Secret Referencing** to avo
 
 #### Hub Projects (shared infrastructure — you do NOT create these)
 
-| Hub Project              | Purpose                          | Secrets It Owns                                                                                                                     |
-| ------------------------ | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `narduk-enterprise-apps` | Cloud infrastructure credentials | `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`                                                                                     |
-| `narduk-analytics`       | Centralized analytics management | `POSTHOG_PUBLIC_KEY`, `POSTHOG_PROJECT_ID`, `POSTHOG_HOST`, `POSTHOG_PERSONAL_API_KEY`, `GA_ACCOUNT_ID`, `GSC_SERVICE_ACCOUNT_JSON` |
+| Hub Project            | Purpose                          | Secrets It Owns                                                                                                                     |
+| ---------------------- | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `narduk-nuxt-template` | Cloud infrastructure credentials | `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`                                                                                     |
+| `narduk-analytics`     | Centralized analytics management | `POSTHOG_PUBLIC_KEY`, `POSTHOG_PROJECT_ID`, `POSTHOG_HOST`, `POSTHOG_PERSONAL_API_KEY`, `GA_ACCOUNT_ID`, `GSC_SERVICE_ACCOUNT_JSON` |
 
 #### App Spoke Projects (one per app — created by `init.ts`)
 
@@ -403,15 +403,15 @@ ${<hub-project>.<config>.<KEY>}
 **Example:** To reference the Cloudflare API token from the enterprise hub:
 
 ```bash
-doppler secrets set CLOUDFLARE_API_TOKEN='${narduk-enterprise-apps.prd.CLOUDFLARE_API_TOKEN}' --project my-app --config prd
+doppler secrets set CLOUDFLARE_API_TOKEN='${narduk-nuxt-template.prd.CLOUDFLARE_API_TOKEN}' --project my-app --config prd
 ```
 
 #### Complete Secret Reference Table
 
 | Secret                  | Source                                           | Config | Notes                                           |
 | ----------------------- | ------------------------------------------------ | ------ | ----------------------------------------------- |
-| `CLOUDFLARE_API_TOKEN`  | `← narduk-enterprise-apps` hub ref               | `prd`  | Deploy credential                               |
-| `CLOUDFLARE_ACCOUNT_ID` | `← narduk-enterprise-apps` hub ref               | `prd`  | Deploy credential                               |
+| `CLOUDFLARE_API_TOKEN`  | `← narduk-nuxt-template` hub ref                 | `prd`  | Deploy credential                               |
+| `CLOUDFLARE_ACCOUNT_ID` | `← narduk-nuxt-template` hub ref                 | `prd`  | Deploy credential                               |
 | `POSTHOG_PUBLIC_KEY`    | `← narduk-analytics` hub ref                     | `prd`  | Shared across all apps (single PostHog project) |
 | `POSTHOG_PROJECT_ID`    | `← narduk-analytics` hub ref                     | `prd`  | Shared across all apps                          |
 | `POSTHOG_HOST`          | `← narduk-analytics` hub ref                     | `prd`  | Defaults to `https://us.i.posthog.com`          |
@@ -420,6 +420,7 @@ doppler secrets set CLOUDFLARE_API_TOKEN='${narduk-enterprise-apps.prd.CLOUDFLAR
 | `GA_MEASUREMENT_ID`     | Per-app (auto-generated by `setup-analytics.ts`) | `prd`  | `G-XXXXXXX`                                     |
 | `INDEXNOW_KEY`          | Per-app (auto-generated by `setup-analytics.ts`) | `prd`  | 32-char hex                                     |
 | `GA_PROPERTY_ID`        | Per-app (auto-generated)                         | `prd`  | GA4 property identifier                         |
+| `APPLE_MAPKIT_TOKEN`    | Per-app                                          | `prd`  | MapKit JS JWT token (runtime, client-safe)      |
 | `GSC_USER_EMAIL`        | Per-app                                          | `prd`  | Google account email for GSC access             |
 
 #### Dev vs. Prd Configs

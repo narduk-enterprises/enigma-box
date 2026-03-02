@@ -14,6 +14,16 @@ export default defineNuxtConfig({
   // Unique HMR WebSocket port — avoids collisions when running all apps concurrently.
   // Must be set via hook because Nuxt's DevServerPlugin overwrites static vite.server.hmr.
   $development: {
+    runtimeConfig: {
+      public: {
+        appUrl: 'http://localhost:3010',
+        exampleAuthUrl: 'http://localhost:3011',
+        exampleBlogUrl: 'http://localhost:3012',
+        exampleMarketingUrl: 'http://localhost:3013',
+        exampleOgImageUrl: 'http://localhost:3015',
+        exampleAppleMapsUrl: 'http://localhost:3016',
+      },
+    },
     hooks: {
       'vite:extendConfig'(config) {
         /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -26,14 +36,13 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      appUrl: process.env.SITE_URL || 'http://localhost:3010',
-      appName: process.env.APP_NAME || 'Nuxt 4 Showcase',
-      exampleAuthUrl: process.env.EXAMPLE_AUTH_URL || 'http://localhost:3011',
-      exampleBlogUrl: process.env.EXAMPLE_BLOG_URL || 'http://localhost:3012',
-      exampleMarketingUrl: process.env.EXAMPLE_MARKETING_URL || 'http://localhost:3013',
-
-      exampleOgImageUrl: process.env.EXAMPLE_OG_IMAGE_URL || 'http://localhost:3015',
-      exampleAppleMapsUrl: process.env.EXAMPLE_APPLE_MAPS_URL || 'http://localhost:3016',
+      appUrl: 'https://showcase.narduk-nuxt-template.workers.dev',
+      appName: 'Nuxt 4 Showcase',
+      exampleAuthUrl: 'https://example-auth.narduk-nuxt-template.workers.dev',
+      exampleBlogUrl: 'https://example-blog.narduk-nuxt-template.workers.dev',
+      exampleMarketingUrl: 'https://example-marketing.narduk-nuxt-template.workers.dev',
+      exampleOgImageUrl: 'https://example-og-image.narduk-nuxt-template.workers.dev',
+      exampleAppleMapsUrl: 'https://example-apple-maps.narduk-nuxt-template.workers.dev',
     },
   },
 

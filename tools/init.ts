@@ -368,8 +368,8 @@ Pushes to \`main\` are automatically built and deployed via the GitHub Actions C
   try {
     const existing = getDopplerSecretNames(APP_NAME, 'prd')
     const hubSecrets: Record<string, string> = {
-      CLOUDFLARE_API_TOKEN: '${narduk-enterprise-apps.prd.CLOUDFLARE_API_TOKEN}',
-      CLOUDFLARE_ACCOUNT_ID: '${narduk-enterprise-apps.prd.CLOUDFLARE_ACCOUNT_ID}',
+      CLOUDFLARE_API_TOKEN: '${narduk-nuxt-template.prd.CLOUDFLARE_API_TOKEN}',
+      CLOUDFLARE_ACCOUNT_ID: '${narduk-nuxt-template.prd.CLOUDFLARE_ACCOUNT_ID}',
       POSTHOG_PUBLIC_KEY: '${narduk-analytics.prd.POSTHOG_PUBLIC_KEY}',
       POSTHOG_PROJECT_ID: '${narduk-analytics.prd.POSTHOG_PROJECT_ID}',
       POSTHOG_HOST: '${narduk-analytics.prd.POSTHOG_HOST}',
