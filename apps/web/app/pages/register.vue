@@ -48,10 +48,19 @@ async function onSubmit() {
 
 <template>
   <UPage>
-    <UPageBody>
-      <UCard class="mx-auto max-w-md">
+    <UPageBody class="relative min-h-[calc(100vh-8rem)] flex items-center justify-center">
+      <div class="absolute inset-0 -z-10">
+        <img
+          src="/images/auth-bg.webp"
+          alt=""
+          class="h-full w-full object-cover"
+        >
+        <div class="absolute inset-0 bg-default/70 dark:bg-default/80" aria-hidden="true" />
+      </div>
+
+      <UCard class="glass-card shadow-elevated mx-auto w-full max-w-md animate-count-in">
         <template #header>
-          <h1 class="text-xl font-semibold">
+          <h1 class="font-display text-xl font-semibold">
             Create account
           </h1>
         </template>
@@ -70,6 +79,7 @@ async function onSubmit() {
                 type="email"
                 placeholder="you@example.com"
                 autocomplete="email"
+                class="w-full"
               />
             </UFormField>
             <UFormField name="name" label="Name (optional)">
@@ -78,6 +88,7 @@ async function onSubmit() {
                 type="text"
                 placeholder="Your name"
                 autocomplete="name"
+                class="w-full"
               />
             </UFormField>
             <UFormField name="password" label="Password">
@@ -86,6 +97,7 @@ async function onSubmit() {
                 type="password"
                 placeholder="At least 8 characters"
                 autocomplete="new-password"
+                class="w-full"
               />
             </UFormField>
             <div class="form-actions flex flex-wrap gap-2">
@@ -93,12 +105,14 @@ async function onSubmit() {
                 type="submit"
                 :loading="state.loading"
                 label="Create account"
+                class="transition-base"
               />
               <UButton
                 to="/login"
                 color="neutral"
                 variant="ghost"
                 label="Already have an account?"
+                class="transition-base"
               />
             </div>
           </div>

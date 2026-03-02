@@ -17,6 +17,8 @@ export default defineNuxtConfig({
     },
   },
 
+  css: ['~/assets/css/main.css'],
+
   future: {
     compatibilityVersion: 4
   },
@@ -60,5 +62,9 @@ export default defineNuxtConfig({
     cloudflare: {
       baseURL: process.env.SITE_URL || 'https://narduk.workers.dev',
     },
+  },
+
+  colorMode: {
+    preference: 'dark',
   },
 })
