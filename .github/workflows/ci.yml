@@ -119,11 +119,46 @@ jobs:
             exit 1
           fi
 
+      - name: Run D1 migrations (remote)
+        working-directory: apps/web
+        run: |
+          echo "Running remote migrations..."
+          # Dynamically run the db:migrate script against the remote database
+          cmd=$(node -p "require('./package.json').scripts['db:migrate']?.replace('--local', '--remote') || ''")
+          if [ -n "$cmd" ]; then
+            pnpm exec $cmd
+          else
+            echo "No db:migrate script found!"
+            exit 1
+          fi
+
       - name: Build & Deploy
+        id: deploy
         working-directory: apps/web
         run: |
           pnpm build
-          pnpm exec wrangler deploy
+          # Capture output to extract the deployed URL for the smoke test
+          deploy_output=$(pnpm exec wrangler deploy)
+          echo "$deploy_output"
+          url=$(echo "$deploy_output" | grep -o 'https://[^ ]*' | grep -v 'dash.cloudflare.com' | head -n 1)
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+
+      - name: Smoke Test D1 Database
+        run: |
+          URL="${{ steps.deploy.outputs.url }}"
+          if [ -z "$URL" ]; then
+            echo "::error::No deployment URL found for smoke test."
+            exit 1
+          fi
+          echo "Testing $URL/api/users..."
+
+          # Expect a 200 OK and valid JSON. If D1 migration failed, Nuxt returns 500.
+          status_code=$(curl -s -o /dev/null -w "%{http_code}" "$URL/api/users")
+          if [ "$status_code" != "200" ]; then
+             echo "::error::Smoke test failed! Expected 200, got $status_code"
+             exit 1
+          fi
+          echo "✅ Smoke test passed."
 
   deploy-examples:
     name: Deploy ${{ matrix.app }}
@@ -177,6 +212,19 @@ jobs:
             exit 1
           fi
 
+      - name: Run D1 migrations (remote)
+        working-directory: apps/${{ matrix.app }}
+        run: |
+          if [ -f "package.json" ]; then
+            cmd=$(node -p "require('./package.json').scripts['db:migrate']?.replace('--local', '--remote') || ''")
+            if [ -n "$cmd" ]; then
+              echo "Running remote migrations for ${{ matrix.app }}..."
+              pnpm exec $cmd
+            else
+              echo "No db:migrate script found for ${{ matrix.app }}, skipping."
+            fi
+          fi
+
       - name: Build & Deploy
         working-directory: apps/${{ matrix.app }}
         run: |
@@ -224,6 +272,19 @@ jobs:
           if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
             echo "::error::Cloudflare credentials missing after secret resolution."
             exit 1
+          fi
+
+      - name: Run D1 migrations (remote)
+        working-directory: apps/showcase
+        run: |
+          if [ -f "package.json" ]; then
+            cmd=$(node -p "require('./package.json').scripts['db:migrate']?.replace('--local', '--remote') || ''")
+            if [ -n "$cmd" ]; then
+              echo "Running remote migrations for showcase..."
+              pnpm exec $cmd
+            else
+              echo "No db:migrate script found for showcase, skipping."
+            fi
           fi
 
       - name: Build & Deploy

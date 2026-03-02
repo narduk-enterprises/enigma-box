@@ -365,6 +365,32 @@ These are opt-in feature recipes. Follow them when the project needs a specific 
 
 ---
 
+## 🚀 Recipe: Deploying & D1 Migrations
+
+**When:** You are ready to deploy your application to Cloudflare Workers and need to manage your D1 database schema.
+
+**Local vs. Remote D1:**
+
+- **Local Dev:** Handled via `pnpm run db:migrate`. This applies schema changes to the local `.wrangler/` SQLite file used during `pnpm dev`.
+- **Production (Remote):** Must be migrated against the actual Cloudflare D1 database.
+
+**How Remote Migrations Work in this Template:**
+The template's GitHub Actions CI workflow (`.github/workflows/ci.yml`) is configured to **automatically run remote D1 migrations** during the deploy job. It does this by reading your app's `db:migrate` script and replacing the `--local` flag with `--remote` right before running `wrangler deploy`.
+
+- If your app has a `"db:migrate": "wrangler d1 execute ..."` script in its `package.json`, CI runs it for you safely.
+- **Smoke Tests:** The CI workflow also runs an automated "smoke test" after deploying the main web app. It dynamically fetches your newly deployed URL and makes a `curl` request to the `/api/users` endpoint to verify the D1 database bindings and migrations were successful. If the request fails (e.g., 500 error due to missing tables), the CI step fails.
+
+**Manual Remote Migrations (Optional):**
+If you ever need to apply migrations manually outside of CI, you can run:
+
+```bash
+cd apps/web && pnpm exec wrangler d1 execute <DB_NAME> --remote --file=drizzle/0000_initial_schema.sql
+```
+
+_(Replace `<DB_NAME>` with your database name from `wrangler.json`, and repeat for each `.sql` file in order)._
+
+---
+
 ## 🧹 Recipe: Production Cleanup (Delete Examples)
 
 **When:** You are building a real application, not exploring the template. Run this after the Initialization Routine.
@@ -547,6 +573,14 @@ doppler secrets set CLOUDFLARE_API_TOKEN='${narduk-nuxt-template.prd.CLOUDFLARE_
 ### Test Explorer: enabling Playwright projects
 
 E2E tests use a **single root config** (`playwright.config.ts` at repo root) with one project per app (showcase, example-auth, example-blog, example-marketing). In the IDE Test Explorer, those projects can appear as **disabled** (greyed out) until you enable them: open the **Playwright** sidebar (below the Test Explorer), find **PROJECTS**, and **check the boxes** for the apps you want. After that you can run or debug tests from the Test Explorer as usual. From the terminal, `pnpm test:e2e` runs all projects; `pnpm test:e2e:auth` runs only the example-auth project.
+
+### 🤖 Agent Testing Instructions
+
+When writing new features, modifying components, or creating composables, **agents MUST write a reasonable amount of tests against their code**.
+
+- **Unit Tests:** Core business logic, parsers, formatters, and composables should have dedicated unit tests (`tests/composables/`, `tests/utils/`) using Vitest.
+- **E2E Tests:** Critical user flows (e.g., login, onboarding, checkout) must have E2E tests using Playwright.
+- **Environment Agnostic:** Ensure tests are designed so they can be run **both against local dev servers and against live production deployments** (e.g., using parameterized base URLs and robust locators).
 
 ---
 

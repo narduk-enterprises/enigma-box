@@ -1,7 +1,3 @@
-import { defineConfig } from 'vitest/config'
+import { defineVitestConfig } from '@nuxt/test-utils/config';
 
-export default defineConfig({
-  test: {
-    include: ['tests/**/*.test.ts'],
-  },
-})
+export default defineVitestConfig({});
