@@ -15,22 +15,20 @@ You are building a **simple task-list application** called `example-tasks` by us
    git clone https://github.com/loganrenz/narduk-nuxt-template.git example-tasks
    cd example-tasks
    ```
-2. Install dependencies:
+2. Clear the template's git history and set up your own repository (Required for GitHub CI secrets to bind properly):
+   ```bash
+   rm -rf .git
+   git init
+   git remote add origin git@github.com:your-username/example-tasks.git
+   ```
+3. Install dependencies:
    ```bash
    pnpm install
    ```
-3. Run the initialization script to rename the project and configure D1 databases:
+4. Run the initialization script to rename the project, configure D1 databases, secure CI tokens, and clean up template examples:
    ```bash
-   pnpm init -- --name="example-tasks" --display="Tasks Example" --url="http://localhost:3000"
+   pnpm setup -- --name="example-tasks" --display="Tasks Example" --url="http://localhost:3000"
    ```
-4. Perform Production Cleanup by deleting the example apps and their references:
-   ```bash
-   rm -rf apps/showcase apps/example-*
-   ```
-
-   - Update `playwright.config.ts` to only include the `web` project.
-   - Update root `package.json` to remove all `dev:showcase`, `dev:auth`, `test:e2e:auth`, etc. scripts.
-   - Remove `.github/workflows/deploy-showcase.yml` and `.github/workflows/publish-layer.yml`.
 
 ### 2. Scaffold the App in `apps/web`
 
@@ -272,7 +270,7 @@ When complete, this project will have validated:
 
 | Subsystem                  | How It's Tested                                                     |
 | -------------------------- | ------------------------------------------------------------------- |
-| **Project Initialization** | Template clone, `init.ts` setup, cleanup script execution           |
+| **Project Initialization** | Template clone, `init.ts` setup + automated cleanup                 |
 | **Layer inheritance**      | `extends: ['@loganrenz/narduk-nuxt-template-layer']` in nuxt.config |
 | **Nuxt 4 structure**       | `app/` directory with `future: { compatibilityVersion: 4 }`         |
 | **D1 + Drizzle**           | `tasks` table via Drizzle ORM with D1 binding                       |

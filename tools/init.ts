@@ -10,10 +10,10 @@ import { fileURLToPath } from 'node:url'
  * Safe to re-run — all steps check for existing state before making changes.
  * 
  * Usage:
- *   pnpm init -- --name="my-app" --display="My App Name" --url="https://myapp.com"
+ *   pnpm setup -- --name="my-app" --display="My App Name" --url="https://myapp.com"
  * 
  * Re-run (repair mode — skip string replacement and README):
- *   pnpm init -- --name="my-app" --display="My App Name" --url="https://myapp.com" --repair
+ *   pnpm setup -- --name="my-app" --display="My App Name" --url="https://myapp.com" --repair
  * 
  * What this does:
  * 1. Safely finds and replaces all boilerplate strings (skipped in --repair mode)
@@ -24,7 +24,8 @@ import { fileURLToPath } from 'node:url'
  * 6. Sets Doppler CI token on GitHub (skips if token exists)
  * 7. Runs analytics provisioning pipeline (each service skips if configured)
  * 8. Generates favicon assets for apps/web/public from source SVG
- * 9. Done — script is kept for future re-runs
+ * 9. Cleans up template-specific example apps and configuration.
+ * 10. Done — script is kept for future re-runs
  */
 
 // --- 1. Argument Parsing ---
@@ -76,8 +77,12 @@ if (!/^[a-z0-9][a-z0-9-]*$/.test(APP_NAME)) {
 // (identity replacement) so the generic `narduk-nuxt-template` pattern below
 // cannot corrupt it.
 const LAYER_PACKAGE = '@loganrenz/narduk-nuxt-template-layer'
+const LAYER_PACKAGE_PLACEHOLDER = '__LAYER_PKG_PLACEHOLDER__'
 const REPLACEMENTS = [
-  { from: /@loganrenz\/narduk-nuxt-template-layer/g, to: LAYER_PACKAGE },
+  // 1. Temporarily replace the protected layer package name with a safe placeholder
+  { from: /@loganrenz\/narduk-nuxt-template-layer/g, to: LAYER_PACKAGE_PLACEHOLDER },
+  
+  // 2. Perform all standard project renames
   { from: /narduk-nuxt-template-examples-db/g, to: `${APP_NAME}-examples-db` },
   { from: /narduk-nuxt-template-examples/g, to: `${APP_NAME}-examples` },
   { from: /narduk-nuxt-template-db/g, to: `${APP_NAME}-db` },
@@ -89,6 +94,9 @@ const REPLACEMENTS = [
   { from: /Nuxt 4 Demo/g, to: DISPLAY_NAME },
   // Template-specific site description — replace with a generic one the agent can customize.
   { from: /A production-ready demo template showcasing Nuxt 4, Nuxt UI 4, Tailwind CSS 4, and Cloudflare Workers with D1 database\./g, to: `${DISPLAY_NAME} — powered by Nuxt 4 and Cloudflare Workers.` },
+  
+  // 3. Restore the protected layer package name
+  { from: new RegExp(LAYER_PACKAGE_PLACEHOLDER, 'g'), to: LAYER_PACKAGE },
 ]
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -148,9 +156,9 @@ async function main() {
   
   // 1. Recursive String Replacement
   if (REPAIR_MODE) {
-    console.log('\nStep 1/9: Replacing boilerplate strings... ⏭ skipped (--repair)')
+    console.log('\nStep 1/10: Replacing boilerplate strings... ⏭ skipped (--repair)')
   } else {
-    console.log('\nStep 1/9: Replacing boilerplate strings...')
+    console.log('\nStep 1/10: Replacing boilerplate strings...')
     const files = await walkDir(ROOT_DIR)
     let changedFiles = 0
 
@@ -226,7 +234,7 @@ async function main() {
   }
 
   // 2. Database Provisioning (per-app — each app gets its own D1 database)
-  console.log('\nStep 2/9: Provisioning D1 Databases...')
+  console.log('\nStep 2/10: Provisioning D1 Databases...')
 
   /**
    * Provision a D1 database by name. Returns the database_id or null on failure.
@@ -268,7 +276,7 @@ async function main() {
   }
 
   // 3. Link each app to its own dedicated D1 database
-  console.log('\nStep 3/9: Linking Databases to wrangler.json...')
+  console.log('\nStep 3/10: Linking Databases to wrangler.json...')
   const appsDir = path.join(ROOT_DIR, 'apps')
   let appDirs: string[] = []
   try {
@@ -331,9 +339,9 @@ async function main() {
 
   // 4. Reset README
   if (REPAIR_MODE) {
-    console.log('\nStep 4/9: Resetting README.md... ⏭ skipped (--repair)')
+    console.log('\nStep 4/10: Resetting README.md... ⏭ skipped (--repair)')
   } else {
-    console.log('\nStep 4/9: Resetting README.md...')
+    console.log('\nStep 4/10: Resetting README.md...')
     const readmeContent = `# ${DISPLAY_NAME}
 
 **${APP_NAME}** — initialized from \`narduk-nuxt-template\`.
@@ -356,7 +364,7 @@ Pushes to \`main\` are automatically built and deployed via the GitHub Actions C
   }
 
   // 5. Doppler Registration (additive — won't clobber existing secrets)
-  console.log('\nStep 5/9: Provisioning Doppler Project...')
+  console.log('\nStep 5/10: Provisioning Doppler Project...')
   console.log(`  Running: doppler projects create ${APP_NAME}`)
   try {
     execSync(`doppler projects create ${APP_NAME} --description "${DISPLAY_NAME} auto-provisioned"`, { encoding: 'utf-8', stdio: 'pipe' })
@@ -380,6 +388,9 @@ Pushes to \`main\` are automatically built and deployed via the GitHub Actions C
       POSTHOG_PROJECT_ID: '${narduk-analytics.prd.POSTHOG_PROJECT_ID}',
       POSTHOG_HOST: '${narduk-analytics.prd.POSTHOG_HOST}',
       APP_NAME: APP_NAME,
+      SITE_URL: SITE_URL,
+      GA_ACCOUNT_ID: '${narduk-analytics.prd.GA_ACCOUNT_ID}',
+      GSC_SERVICE_ACCOUNT_JSON: '${narduk-analytics.prd.GSC_SERVICE_ACCOUNT_JSON}'
     }
 
     const toSet = Object.entries(hubSecrets)
@@ -397,7 +408,7 @@ Pushes to \`main\` are automatically built and deployed via the GitHub Actions C
   }
 
   // 6. Doppler Service Token → GitHub Secret (skip if token exists)
-  console.log('\nStep 6/9: Adding Doppler token to GitHub repository...')
+  console.log('\nStep 6/10: Adding Doppler token to GitHub repository...')
 
   // Pre-check: a non-template git remote must exist for gh secret set to work
   let hasGitRemote = false
@@ -473,7 +484,7 @@ Pushes to \`main\` are automatically built and deployed via the GitHub Actions C
   }
 
   // 7. Analytics Provisioning (each service internally skips if already configured)
-  console.log('\nStep 7/9: Bootstrapping Google Analytics & IndexNow...')
+  console.log('\nStep 7/10: Bootstrapping Google Analytics & IndexNow...')
   try {
     const toolsDir = path.join(ROOT_DIR, 'tools')
     if (await fs.stat(path.join(toolsDir, 'setup-analytics.ts')).catch(() => null)) {
@@ -513,11 +524,14 @@ Pushes to \`main\` are automatically built and deployed via the GitHub Actions C
   }
 
   // 8. Generate Favicons for apps/web
-  console.log('\nStep 8/9: Generating favicon assets for apps/web...')
+  console.log('\nStep 8/10: Generating favicon assets for apps/web...')
   try {
     const webPublicDir = path.join(ROOT_DIR, 'apps', 'web', 'public')
     const webFaviconSvg = path.join(webPublicDir, 'favicon.svg')
     if (await fs.stat(webFaviconSvg).then(() => true).catch(() => false)) {
+      console.log('  Installing ephemeral dependencies (sharp)...')
+      execSync('pnpm add -w --save-dev sharp', { encoding: 'utf-8', stdio: 'pipe' })
+      
       execSync(
         `npx tsx tools/generate-favicons.ts --target=apps/web/public --name="${DISPLAY_NAME}" --short-name="${DISPLAY_NAME.slice(0, 12)}"`,
         { stdio: 'inherit', cwd: ROOT_DIR }
@@ -532,8 +546,92 @@ Pushes to \`main\` are automatically built and deployed via the GitHub Actions C
     console.warn('    Run manually: pnpm generate:favicons -- --target=apps/web/public')
   }
 
-  // 9. Done (script is kept for re-runs)
-  console.log('\nStep 9/9: Complete!')
+  // 9. Template Cleanup (removing template-specific robust boilerplate)
+  if (REPAIR_MODE) {
+    console.log('\nStep 9/10: Cleaning up template examples... ⏭ skipped (--repair)')
+  } else {
+    console.log('\nStep 9/10: Cleaning up template examples and configs...')
+    try {
+      const rmOptions = { recursive: true, force: true }
+      // Remove example directories
+      const dirsToRemove = [
+        path.join(ROOT_DIR, 'apps', 'showcase'),
+      ]
+      
+      const appsContent = await fs.readdir(path.join(ROOT_DIR, 'apps'), { withFileTypes: true }).catch(() => [])
+      for (const entry of appsContent) {
+        if (entry.isDirectory() && entry.name.startsWith('example-')) {
+          dirsToRemove.push(path.join(ROOT_DIR, 'apps', entry.name))
+        }
+      }
+
+      for (const dir of dirsToRemove) {
+        await fs.rm(dir, rmOptions)
+      }
+
+      // Remove specific GitHub workflows
+      await fs.rm(path.join(ROOT_DIR, '.github', 'workflows', 'deploy-showcase.yml'), rmOptions)
+      await fs.rm(path.join(ROOT_DIR, '.github', 'workflows', 'publish-layer.yml'), rmOptions)
+
+      // Prune root package.json scripts
+      const rootPkgPath = path.join(ROOT_DIR, 'package.json')
+      const rootPkgContent = await fs.readFile(rootPkgPath, 'utf-8')
+      const rootPkg = JSON.parse(rootPkgContent)
+      if (rootPkg.scripts) {
+        const scriptsToRemove = [
+          'dev:showcase', 'dev:auth', 'dev:blog', 'dev:marketing', 'dev:og-image', 'dev:apple-maps',
+          'db:ready:all', 'db:ready:auth', 'db:ready:blog', 'db:migrate:auth', 'db:seed:auth',
+          'build:showcase', 'deploy:showcase',
+          'test:e2e:auth', 'test:e2e:blog', 'test:e2e:marketing', 'test:e2e:showcase', 'test:e2e:apple-maps'
+        ]
+        for (const script of scriptsToRemove) {
+          delete rootPkg.scripts[script]
+        }
+        await fs.writeFile(rootPkgPath, JSON.stringify(rootPkg, null, 2) + '\n', 'utf-8')
+      }
+
+      // Rewrite playwright.config.ts to simple web configuration
+      const playwrightConfigPath = path.join(ROOT_DIR, 'playwright.config.ts')
+      const playwrightContent = `import { defineConfig, devices } from '@playwright/test'
+
+export default defineConfig({
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+  maxFailures: process.env.CI ? undefined : 1,
+  reporter: 'html',
+  timeout: 15_000,
+  expect: { timeout: 2_000 },
+  use: {
+    trace: 'on-first-retry',
+    actionTimeout: 3_000,
+    navigationTimeout: 5_000,
+  },
+  webServer: {
+    command: 'pnpm run dev',
+    url: 'http://localhost:3000',
+    reuseExistingServer: true,
+    timeout: 30_000,
+  },
+  projects: [
+    {
+      name: 'web',
+      testDir: 'apps/web/tests/e2e',
+      use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3000' },
+    },
+  ],
+})
+`
+      await fs.writeFile(playwrightConfigPath, playwrightContent, 'utf-8')
+
+      console.log('  ✅ Cleaned up example apps, workflows, and package/playwright config.')
+    } catch (error: any) {
+      console.warn(`  ⚠️ Template cleanup failed: ${error.message}`)
+    }
+  }
+
+  // 10. Done (script is kept for re-runs)
+  console.log('\nStep 10/10: Complete!')
   console.log('  ℹ️  init.ts is kept for re-runs. Use --repair to re-run infra steps only.')
 
   console.log('\n🎉 Project initialization complete!')

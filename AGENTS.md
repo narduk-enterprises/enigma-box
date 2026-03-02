@@ -26,7 +26,7 @@ This is a **minimal Nuxt 4 + Nuxt UI 4** boilerplate deployed to **Cloudflare Wo
 | **Isolate**       | A Cloudflare Workers V8 isolate — a lightweight, stateless execution environment. Each request may hit a different isolate, so in-memory state is not shared across requests. |
 | **Per-isolate**   | Scoped to a single V8 isolate instance. Per-isolate rate limiting, for example, only tracks requests within one isolate's memory.                                             |
 | **Hub project**   | A Doppler project that stores shared infrastructure secrets (e.g. `narduk-nuxt-template`). You do NOT create these.                                                           |
-| **Spoke project** | A Doppler project for a specific app that references hub secrets via cross-project references. Created by `init.ts`.                                                          |
+| **Spoke project** | A Doppler project for a specific app that references hub secrets via cross-project references. Created by `init.ts` (via `pnpm setup`).                                       |
 
 For full-featured example implementations, see the **Showcase** apps in `apps/showcase/`, `apps/example-auth/`, `apps/example-blog/`, `apps/example-marketing/`, `apps/example-og-image/`, and `apps/example-apple-maps/`.
 
@@ -71,25 +71,25 @@ _You can create `app/components/`, `server/api/`, etc., in `apps/web/`, but ensu
 
 The layer at `layers/narduk-nuxt-layer/` provides all of the following out-of-the-box. **Do not copy or recreate these in your app.**
 
-| Category        | Files                                                                              | What You Get                                                            |
-| --------------- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| **Modules**     | `nuxt.config.ts`                                                                   | `@nuxt/ui`, `@nuxt/fonts`, `@nuxt/image`, `@nuxtjs/seo`, `@nuxt/eslint` |
-| **Nitro**       | `nuxt.config.ts`                                                                   | `cloudflare-module` preset, esbuild target, Drizzle inline              |
-| **UI/Color**    | `nuxt.config.ts` + `app/app.config.ts`                                             | colorMode, ogImage defaults, image provider                             |
-| **SEO**         | `app/composables/useSeo.ts`, `useSchemaOrg.ts`                                     | `useSeo()`, `useWebPageSchema()`, `useArticleSchema()`, etc.            |
-| **OG Images**   | `app/components/OgImage/*`                                                         | Dynamic OG image templates (Satori)                                     |
-| **Analytics**   | `app/plugins/gtag.client.ts`, `posthog.client.ts`                                  | PostHog + GA4 (no-op without keys)                                      |
-| **CSRF**        | `app/plugins/fetch.client.ts`, `server/middleware/csrf.ts`                         | Auto `X-Requested-With` header + server validation                      |
-| **Security**    | `server/middleware/cors.ts`, `securityHeaders.ts`                                  | CORS, CSP, X-Frame-Options, Referrer-Policy                             |
-| **Rate Limit**  | `server/utils/rateLimit.ts`                                                        | Per-isolate sliding-window IP limiter                                   |
-| **Database**    | `server/utils/database.ts`, `server/middleware/d1.ts`, `server/database/schema.ts` | D1 bindings, Drizzle connection, base schema                            |
-| **Storage**     | `server/utils/kv.ts`, `server/utils/r2.ts`                                         | KV and R2 binding helpers                                               |
-| **Auth**        | `server/utils/auth.ts`                                                             | `requireAdmin`, PBKDF2 password hashing                                 |
-| **Health**      | `server/api/health.get.ts`                                                         | `/api/health` endpoint                                                  |
-| **IndexNow**    | `server/api/indexnow/*`, `server/middleware/indexnow.ts`                           | IndexNow submission + key verification                                  |
-| **Error Pages** | `app/error.vue`                                                                    | Branded global error pages (404/500)                                    |
-| **Base CSS**    | `app/assets/css/main.css`                                                          | Tailwind v4 `@theme` tokens, glass/card utilities                       |
-| **App Shell**   | `app/app.vue`, `app/app.config.ts`                                                 | `<UApp>` wrapper, color token defaults                                  |
+| Category        | Files                                                                              | What You Get                                                                          |
+| --------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| **Modules**     | `nuxt.config.ts`                                                                   | `@nuxt/ui`, `@nuxt/fonts`, `@nuxt/image`, `@nuxtjs/seo`, `@nuxt/eslint`               |
+| **Nitro**       | `nuxt.config.ts`                                                                   | `cloudflare-module` preset, esbuild target, Drizzle inline                            |
+| **UI/Color**    | `nuxt.config.ts` + `app/app.config.ts`                                             | colorMode, ogImage defaults, image provider                                           |
+| **SEO**         | `app/composables/useSeo.ts`, `useSchemaOrg.ts`                                     | `useSeo()`, `useWebPageSchema()`, `useArticleSchema()`, etc.                          |
+| **OG Images**   | `app/components/OgImage/*`                                                         | Dynamic OG image templates (Satori)                                                   |
+| **Analytics**   | `app/plugins/gtag.client.ts`, `posthog.client.ts`                                  | PostHog + GA4 (no-op without keys)                                                    |
+| **CSRF**        | `app/plugins/fetch.client.ts`, `server/middleware/csrf.ts`                         | Auto `X-Requested-With` header + server validation                                    |
+| **Security**    | `server/middleware/cors.ts`, `securityHeaders.ts`                                  | CORS, CSP, X-Frame-Options, Referrer-Policy                                           |
+| **Rate Limit**  | `server/utils/rateLimit.ts`                                                        | Per-isolate sliding-window IP limiter                                                 |
+| **Database**    | `server/utils/database.ts`, `server/middleware/d1.ts`, `server/database/schema.ts` | D1 bindings, Drizzle connection, base schema (`nitro-cloudflare-dev` required in app) |
+| **Storage**     | `server/utils/kv.ts`, `server/utils/r2.ts`                                         | KV and R2 binding helpers                                                             |
+| **Auth**        | `server/utils/auth.ts`                                                             | `requireAdmin`, PBKDF2 password hashing                                               |
+| **Health**      | `server/api/health.get.ts`                                                         | `/api/health` endpoint                                                                |
+| **IndexNow**    | `server/api/indexnow/*`, `server/middleware/indexnow.ts`                           | IndexNow submission + key verification                                                |
+| **Error Pages** | `app/error.vue`                                                                    | Branded global error pages (404/500)                                                  |
+| **Base CSS**    | `app/assets/css/main.css`                                                          | Tailwind v4 `@theme` tokens, glass/card utilities                                     |
+| **App Shell**   | `app/app.vue`, `app/app.config.ts`                                                 | `<UApp>` wrapper, color token defaults                                                |
 
 ### Showcase Architecture
 
@@ -102,6 +102,8 @@ To add a new example app:
 3. Add a card to `apps/showcase/app/pages/index.vue`
 
 **Dev and seed data:** Apps that use D1 (example-auth, example-blog) run `db:ready` (migrate + seed) before `nuxt dev`, so the local D1 database is always created and populated with seed data when you start dev. From the repo root you can run `pnpm db:ready:auth` to prepare the auth example DB before `pnpm dev:showcase`.
+
+> **⚠️ Local D1 Requirement:** The app must explicitly install `nitro-cloudflare-dev` and register it in `nuxt.config.ts` (pointing `nitro.cloudflareDev.configPath` to the app's `wrangler.json`) to provide the local D1 proxy to the dev server. Without this, server routes will fail to access the database during development.
 
 ### Updating the Layer
 
@@ -214,14 +216,27 @@ Sitemap and robots.txt are automatic. OG image templates live in `app/components
 Follow these steps **in order** — the init script handles renaming, D1 provisioning, and Doppler setup.
 
 1. Clone: `git clone https://github.com/loganrenz/narduk-nuxt-template.git my-app && cd my-app`
-2. Install: `pnpm install`
-3. **Run the init script** (renames everything, provisions D1, creates Doppler project):
+2. Clear the template's git history and set up your own repository (Required for GitHub CI secrets to bind properly):
    ```bash
-   pnpm init -- --name="your-app-name" --display="Your Display Name" --url="https://yoururl.com"
+   rm -rf .git
+   git init
+   git remote add origin git@github.com:your-username/my-app.git
    ```
-4. Wire up Doppler locally: `doppler setup --project your-app-name --config dev`
-5. Start dev: `doppler run -- pnpm run dev`
-6. Verify infrastructure: `pnpm run validate`
+3. Install dependencies: `pnpm install`
+4. **Run the initialization script** (renames everything, provisions D1, creates Doppler project, pushes CI token to GitHub):
+   ```bash
+   pnpm setup -- --name="your-app-name" --display="Your Display Name" --url="https://yoururl.com"
+   ```
+5. **Configure Local D1 (Critical Step):** If your app uses the database, you MUST add `nitro-cloudflare-dev` to your app to proxy D1 to the dev server:
+   - `pnpm --filter your-app-name add -D nitro-cloudflare-dev`
+   - In your app's `nuxt.config.ts`, add:
+     ```ts
+     modules: ['nitro-cloudflare-dev'],
+     nitro: { cloudflareDev: { configPath: resolve(__dirname, 'wrangler.json') } }
+     ```
+6. Wire up Doppler locally: `doppler setup --project your-app-name --config dev`
+7. Start dev: `doppler run -- pnpm run dev`
+8. Verify infrastructure: `pnpm run validate`
 
 > See the **🚀 Initialization Routine** recipe below for the full details and edge cases.
 
@@ -348,7 +363,7 @@ These are opt-in feature recipes. Follow them when the project needs a specific 
    - `site.name` — change to your app's name
    - `site.description` — change to your app's description
    - `schemaOrg.identity.name` — match your app name
-     > _Note: If you ran `pnpm init` with `--display`, these values were already replaced automatically._
+     > _Note: If you ran `pnpm setup` with `--display`, these values were already replaced automatically._
 
 6. **Replace `apps/web/app/pages/index.vue`** — this is a placeholder landing page. Build your actual homepage.
 
