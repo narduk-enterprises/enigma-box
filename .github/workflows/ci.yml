@@ -137,10 +137,10 @@ jobs:
         working-directory: apps/web
         run: |
           pnpm build
-          # Capture output to extract the deployed URL for the smoke test
           deploy_output=$(pnpm exec wrangler deploy)
           echo "$deploy_output"
-          url=$(echo "$deploy_output" | grep -o 'https://[^ ]*' | grep -v 'dash.cloudflare.com' | head -n 1)
+          # Extract workers.dev URL (last https URL containing .workers.dev)
+          url=$(echo "$deploy_output" | grep -oE 'https://[^ ]+\.workers\.dev' | tail -n 1)
           echo "url=$url" >> "$GITHUB_OUTPUT"
 
       - name: Smoke Test D1 Database
@@ -151,11 +151,15 @@ jobs:
             exit 1
           fi
           echo "Testing $URL/api/users..."
-
-          # Expect a 200 OK and valid JSON. If D1 migration failed, Nuxt returns 500.
-          status_code=$(curl -s -o /dev/null -w "%{http_code}" "$URL/api/users")
-          if [ "$status_code" != "200" ]; then
-             echo "::error::Smoke test failed! Expected 200, got $status_code"
-             exit 1
-          fi
-          echo "✅ Smoke test passed."
+          # Allow a few seconds for deployment to propagate, then retry
+          for i in 1 2 3 4 5; do
+            status_code=$(curl -s -o /dev/null -w "%{http_code}" "$URL/api/users")
+            if [ "$status_code" = "200" ]; then
+              echo "✅ Smoke test passed."
+              exit 0
+            fi
+            echo "Attempt $i: got $status_code, retrying in 5s..."
+            sleep 5
+          done
+          echo "::error::Smoke test failed! Expected 200, got $status_code"
+          exit 1
