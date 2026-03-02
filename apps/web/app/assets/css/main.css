@@ -1,7 +1,6 @@
 /* EnigmaBox theme overrides — loads after layer; @nuxt/fonts resolves Google Fonts */
 
 @import 'tailwindcss';
-@import '@nuxt/ui';
 
 @theme {
   --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;

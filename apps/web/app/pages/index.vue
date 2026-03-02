@@ -14,7 +14,7 @@ const { isAuthenticated } = useAuth()
 <template>
   <UPage>
     <UPageBody>
-      <section class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-500/15 via-primary-600/10 to-transparent dark:from-primary-600/20 dark:via-primary-700/15 p-8 sm:p-12 lg:p-16 shadow-card border border-default">
+      <section class="relative overflow-hidden rounded-2xl bg-linear-to-br from-primary-500/15 via-primary-600/10 to-transparent dark:from-primary-600/20 dark:via-primary-700/15 p-8 sm:p-12 lg:p-16 shadow-card border border-default">
         <div class="relative z-10 max-w-2xl">
           <h1 class="font-display text-3xl font-bold tracking-tight text-highlighted sm:text-4xl animate-count-in">
             EnigmaBox
