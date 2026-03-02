@@ -1,20 +1,22 @@
 {
   "$schema": "https://unpkg.com/wrangler@latest/config-schema.json",
-  "name": "narduk-nuxt-template",
+  "name": "enigma-box",
   "main": ".output/server/index.mjs",
   "assets": {
     "directory": ".output/public"
   },
   "compatibility_date": "2025-07-15",
-  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
   "observability": {
     "enabled": true
   },
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "narduk-nuxt-template-db",
-      "database_id": "2176c867-da11-4328-a79a-852fa713ca9e"
+      "database_name": "enigma-box-db",
+      "database_id": "e581028e-8aab-4930-afd0-48db1799bde0"
     }
   ]
 }

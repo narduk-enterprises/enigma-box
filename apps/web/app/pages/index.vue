@@ -1,28 +1,44 @@
 <script setup lang="ts">
 useSeo({
-  title: 'Welcome to the Nuxt 4 Template',
-  description: 'Built with Nuxt 4, Nuxt UI 4, and Cloudflare Workers.',
+  title: 'EnigmaBox — Digital escape room builder',
+  description: 'Build and play escape rooms. Create locks, riddles, and puzzles; validate answers securely at the edge.',
 })
 useWebPageSchema({
-  name: 'Welcome to the Nuxt 4 Template',
-  description: 'Built with Nuxt 4, Nuxt UI 4, and Cloudflare Workers.',
+  name: 'EnigmaBox — Digital escape room builder',
+  description: 'Build and play escape rooms. Create locks, riddles, and puzzles; validate answers securely at the edge.',
 })
+
+const { isAuthenticated } = useAuth()
 </script>
 
 <template>
   <UPage>
     <UPageHero
-      title="Nuxt 4 Template"
-      description="Built with Nuxt 4, Nuxt UI 4, Tailwind CSS 4, and deployed on Cloudflare Workers with D1."
+      title="EnigmaBox"
+      description="Build and play digital escape rooms. Create puzzles, set answers, and let players solve them — validation happens securely at the edge."
     >
       <template #links>
         <UButton
-          to="https://ui.nuxt.com"
-          target="_blank"
-          icon="i-lucide-book-open"
-          color="neutral"
+          v-if="isAuthenticated"
+          to="/dashboard"
+          icon="i-lucide-layout-dashboard"
         >
-          Nuxt UI Docs
+          Dashboard
+        </UButton>
+        <UButton
+          v-else
+          to="/login"
+          icon="i-lucide-log-in"
+        >
+          Log in
+        </UButton>
+        <UButton
+          to="/register"
+          color="neutral"
+          variant="outline"
+          icon="i-lucide-user-plus"
+        >
+          Create account
         </UButton>
       </template>
     </UPageHero>

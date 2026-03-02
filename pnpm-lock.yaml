@@ -316,10 +316,19 @@ importers:
       '@narduk/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
+      drizzle-orm:
+        specifier: ^0.45.1
+        version: 0.45.1(@cloudflare/workers-types@4.20260226.1)(@opentelemetry/api@1.9.0)(better-sqlite3@11.10.0)
       nuxt:
         specifier: ^4.3.1
         version: 4.3.1(@parcel/watcher@2.5.6)(@types/node@22.19.13)(@vue/compiler-sfc@3.5.29)(better-sqlite3@11.10.0)(cac@6.7.14)(db0@0.3.4(better-sqlite3@11.10.0)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20260226.1)(@opentelemetry/api@1.9.0)(better-sqlite3@11.10.0)))(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20260226.1)(@opentelemetry/api@1.9.0)(better-sqlite3@11.10.0))(eslint@10.0.2(jiti@2.6.1))(ioredis@5.10.0)(lightningcss@1.31.1)(magicast@0.5.2)(optionator@0.9.4)(rollup@4.59.0)(terser@5.46.0)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@22.19.13)(jiti@2.6.1)(lightningcss@1.31.1)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.5(typescript@5.9.3))(yaml@2.8.2)
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
     devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20260226.1
+        version: 4.20260226.1
       '@tailwindcss/vite':
         specifier: ^4.0.0
         version: 4.2.1(vite@7.3.1(@types/node@22.19.13)(jiti@2.6.1)(lightningcss@1.31.1)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
