@@ -1,0 +1,31 @@
+{
+  "room": {
+    "id": "demo-room-1",
+    "title": "The First Lock",
+    "description": "A short intro escape. Three quick puzzles to learn how EnigmaBox works.",
+    "creatorId": "00000000-0000-0000-0000-000000000001"
+  },
+  "puzzles": [
+    {
+      "sequenceOrder": 0,
+      "puzzleType": "text",
+      "content": "Welcome. To unlock the next step, answer this: What number comes after 2?",
+      "answer": "3",
+      "hints": []
+    },
+    {
+      "sequenceOrder": 1,
+      "puzzleType": "text",
+      "content": "Good. Now spell the word that means the opposite of \"start\".",
+      "answer": "end",
+      "hints": ["It has three letters."]
+    },
+    {
+      "sequenceOrder": 2,
+      "puzzleType": "code",
+      "content": "Final lock. Enter the code: the word \"unlock\" in all lowercase.",
+      "answer": "unlock",
+      "hints": []
+    }
+  ]
+}

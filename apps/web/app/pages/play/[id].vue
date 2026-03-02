@@ -12,10 +12,13 @@ useWebPageSchema({
 })
 
 const { start: startRoom, verify: verifyAnswer } = useRoomPlay(roomId)
+const { data: leaderboard, refresh: refreshLeaderboard, formatDuration } = useRoomLeaderboard(roomId)
 
 const step = ref<'start' | 'playing' | 'completed'>('start')
 const playerName = ref('')
 const sessionId = ref<string | null>(null)
+const startTime = ref<string | null>(null)
+const completedEndTime = ref<string | null>(null)
 const room = ref<{ id: string; title: string; description?: string | null } | null>(null)
 const puzzle = ref<{
   id: string
@@ -29,6 +32,25 @@ const loading = ref(false)
 const error = ref('')
 const correct = ref(false)
 const completed = ref(false)
+const copyLinkDone = ref(false)
+
+const durationMs = computed(() => {
+  if (!startTime.value || !completedEndTime.value) return null
+  return new Date(completedEndTime.value).getTime() - new Date(startTime.value).getTime()
+})
+
+const myRank = computed(() => {
+  const list = leaderboard.value ?? []
+  const name = playerName.value.trim()
+  const entry = list.find((e) => e.playerName === name)
+  return entry?.rank ?? null
+})
+
+const topLeaderboard = computed(() => (leaderboard.value ?? []).slice(0, 10))
+
+function isCurrentPlayer(entry: { playerName: string }): boolean {
+  return entry.playerName === playerName.value.trim()
+}
 
 async function startGame() {
   error.value = ''
@@ -40,6 +62,7 @@ async function startGame() {
   try {
     const res = await startRoom({ playerName: playerName.value.trim() })
     sessionId.value = res.sessionId
+    startTime.value = res.startTime
     room.value = res.room
     puzzle.value = res.puzzle
     step.value = 'playing'
@@ -59,9 +82,11 @@ async function submitAnswer() {
     const res = await verifyAnswer({ answer: answer.value, sessionId: sessionId.value })
     correct.value = res.correct
     if (res.completed) {
+      completedEndTime.value = res.endTime ?? new Date().toISOString()
       step.value = 'completed'
       completed.value = true
       puzzle.value = null
+      await refreshLeaderboard()
     } else if (res.nextPuzzle) {
       puzzle.value = res.nextPuzzle
       answer.value = ''
@@ -71,6 +96,16 @@ async function submitAnswer() {
     error.value = (e as { data?: { message?: string } })?.data?.message ?? 'Verification failed'
   } finally {
     loading.value = false
+  }
+}
+
+function copyPlayLink() {
+  const url = typeof window !== 'undefined' ? `${window.location.origin}/play/${roomId}` : ''
+  if (url && typeof navigator !== 'undefined' && navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(() => {
+      copyLinkDone.value = true
+      setTimeout(() => { copyLinkDone.value = false }, 2000)
+    })
   }
 }
 </script>
@@ -150,21 +185,65 @@ async function submitAnswer() {
       </div>
 
       <!-- Completed -->
-      <UCard v-else-if="step === 'completed'" class="mx-auto max-w-md text-center">
-        <template #header>
-          <h1 class="text-xl font-semibold">
-            Room complete
-          </h1>
-        </template>
-        <p class="text-muted">
-          You solved all puzzles. Well done!
-        </p>
-        <UButton
-          class="mt-4"
-          to="/"
-          label="Back to home"
-        />
-      </UCard>
+      <div v-else-if="step === 'completed'" class="mx-auto max-w-2xl space-y-6">
+        <UCard class="text-center">
+          <template #header>
+            <h1 class="font-display text-xl font-semibold">
+              Room complete
+            </h1>
+          </template>
+          <p class="text-muted">
+            You solved all puzzles. Well done!
+          </p>
+          <p v-if="durationMs != null" class="mt-2 text-lg font-semibold text-highlighted">
+            Your time: {{ formatDuration(durationMs) }}
+          </p>
+          <p v-if="myRank != null" class="mt-1 text-primary-600 dark:text-primary-400">
+            You're #{{ myRank }} on the leaderboard
+          </p>
+          <div class="mt-6 flex flex-wrap justify-center gap-3">
+            <UButton
+              to="/play"
+              icon="i-lucide-play"
+              label="Play another room"
+            />
+            <UButton
+              to="/"
+              color="neutral"
+              variant="outline"
+              icon="i-lucide-home"
+              label="Back to home"
+            />
+            <UButton
+              color="neutral"
+              variant="ghost"
+              :icon="copyLinkDone ? 'i-lucide-check' : 'i-lucide-link'"
+              :label="copyLinkDone ? 'Copied!' : 'Copy room link'"
+              @click="copyPlayLink"
+            />
+          </div>
+        </UCard>
+
+        <UCard v-if="leaderboard?.length" class="overflow-hidden">
+          <template #header>
+            <h2 class="font-display text-lg font-semibold">
+              Top times
+            </h2>
+          </template>
+          <ul class="divide-y divide-default">
+            <li
+              v-for="entry in topLeaderboard"
+              :key="entry.rank"
+              class="flex items-center justify-between py-2 first:pt-0 last:pb-0"
+              :class="{ 'bg-primary/10 font-medium': isCurrentPlayer(entry) }"
+            >
+              <span class="text-dimmed">#{{ entry.rank }}</span>
+              <span class="text-highlighted">{{ entry.playerName }}</span>
+              <span class="font-mono text-sm">{{ formatDuration(entry.durationMs) }}</span>
+            </li>
+          </ul>
+        </UCard>
+      </div>
     </UPageBody>
   </UPage>
 </template>

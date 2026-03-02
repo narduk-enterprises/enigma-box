@@ -132,6 +132,13 @@ jobs:
             exit 1
           fi
 
+      - name: Run D1 seed (remote)
+        working-directory: apps/web
+        run: |
+          echo "Running remote seed (layer users + EnigmaBox demo room)..."
+          pnpm exec wrangler d1 execute enigma-box-db --remote --file=node_modules/@loganrenz/narduk-nuxt-template-layer/drizzle/seed.sql
+          pnpm exec wrangler d1 execute enigma-box-db --remote --file=drizzle/seed_rooms.sql
+
       - name: Build & Deploy
         id: deploy
         working-directory: apps/web

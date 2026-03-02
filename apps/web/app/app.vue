@@ -16,7 +16,10 @@ function cycleColorMode() {
 }
 
 const navItems = computed(() => {
-  const items = [{ label: 'Home', to: '/', icon: 'i-lucide-home' }]
+  const items = [
+    { label: 'Home', to: '/', icon: 'i-lucide-home' },
+    { label: 'Play', to: '/play', icon: 'i-lucide-play' },
+  ]
   if (isAuthenticated.value) {
     items.push({ label: 'Dashboard', to: '/dashboard', icon: 'i-lucide-layout-dashboard' })
   }
@@ -98,9 +101,15 @@ watch(route, () => {
 
       <div class="border-t border-default py-6" role="contentinfo">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p class="text-center text-sm text-muted">
-            {{ appName }} · Nuxt UI 4 · Cloudflare Workers · <NuxtTime :datetime="new Date()" year="numeric" />
-          </p>
+          <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm text-muted">
+            <NuxtLink to="/guide/play" class="hover:text-default transition-base">
+              How to play
+            </NuxtLink>
+            <NuxtLink to="/guide/create" class="hover:text-default transition-base">
+              How to create
+            </NuxtLink>
+            <span><NuxtTime :datetime="new Date()" year="numeric" /></span>
+          </div>
         </div>
       </div>
     </div>

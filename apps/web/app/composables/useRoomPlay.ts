@@ -5,6 +5,7 @@ export function useRoomPlay(roomId: string) {
     async start(payload: { playerName: string }) {
       return $csrfFetch<{
         sessionId: string
+        startTime: string
         room: { id: string; title: string; description: string | null }
         puzzle: {
           id: string
@@ -22,6 +23,7 @@ export function useRoomPlay(roomId: string) {
       return $csrfFetch<{
         correct: boolean
         completed?: boolean
+        endTime?: string
         nextPuzzle?: {
           id: string
           sequenceOrder: number
