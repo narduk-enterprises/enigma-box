@@ -1,20 +1,20 @@
 # AGENTS.md — AI Agent Instructions
 
-> **🚨 CRITICAL: DO NOT PUSH TO `loganrenz/narduk-nuxt-template` 🚨**
+> **🚨 CRITICAL: DO NOT PUSH TO `narduk-enterprises/narduk-nuxt-template` 🚨**
 >
 > This is a **read-only template repository**. Before writing ANY code, you MUST create your own repo:
 >
 > ```bash
-> git clone https://github.com/loganrenz/narduk-nuxt-template.git <project-name>
+> git clone https://github.com/narduk-enterprises/narduk-nuxt-template.git <project-name>
 > cd <project-name>
 > pnpm install
 > ```
 >
-> **Verify your remote** with `git remote -v` — it must NOT point to `loganrenz/narduk-nuxt-template`.
+> **Verify your remote** with `git remote -v` — it must NOT point to `narduk-enterprises/narduk-nuxt-template`.
 
 This is a **minimal Nuxt 4 + Nuxt UI 4** boilerplate deployed to **Cloudflare Workers** with **D1 SQLite** (Drizzle ORM).
 
-> **⚠️ ARCHITECTURE:** This repository is a **PNPM Workspace Monorepo**. Your application lives in `apps/web/` and consumes the shared layer at `layers/narduk-nuxt-layer/` (linked via `"@loganrenz/narduk-nuxt-template-layer": "workspace:*"` in each app’s `package.json`; referenced in `nuxt.config.ts` as `extends: ['@loganrenz/narduk-nuxt-template-layer']`).
+> **⚠️ ARCHITECTURE:** This repository is a **PNPM Workspace Monorepo**. Your application lives in `apps/web/` and consumes the shared layer at `layers/narduk-nuxt-layer/` (linked via `"@narduk-enterprises/narduk-nuxt-template-layer": "workspace:*"` in each app’s `package.json`; referenced in `nuxt.config.ts` as `extends: ['@narduk-enterprises/narduk-nuxt-template-layer']`).
 > When building an app using this template, DO NOT recreate standard Nuxt UI components. Rely on the inherited layer.
 
 ## Glossary
@@ -43,7 +43,7 @@ apps/
   web/                     # The main Nuxt 4 application
     app/                   # App UI (pages, components, layouts)
     server/                # Edge API endpoints and D1 database handling
-    nuxt.config.ts         # Extends @loganrenz/narduk-nuxt-template-layer
+    nuxt.config.ts         # Extends @narduk-enterprises/narduk-nuxt-template-layer
   showcase/                # Landing page with links to each example app
   example-auth/            # Auth example (independent worker)
   example-blog/            # Blog example (independent worker)
@@ -115,7 +115,7 @@ pnpm run update-layer
 
 **What this does under the hood:**
 
-1. Adds or updates a `template` Git remote pointing to `https://github.com/loganrenz/narduk-nuxt-template.git`.
+1. Adds or updates a `template` Git remote pointing to `https://github.com/narduk-enterprises/narduk-nuxt-template.git`.
 2. Fetches `main` from the template.
 3. Checks out the `layers/narduk-nuxt-layer` directory from `template/main`, overwriting the local layer directory.
 4. Rewrites `layers/narduk-nuxt-layer/package.json` so its `repository.url` points to _your_ app's origin instead of the template's, preventing identity drift.
@@ -233,7 +233,7 @@ Follow these steps **in order** — the init script handles renaming, D1 provisi
 
 > **Doppler is optional for initial setup.** Steps that require Doppler (project creation, hub secret sync, GitHub CI token, analytics) are skipped gracefully when the Doppler CLI is not installed or configured. You can complete them later by running `doppler setup` and re-running `pnpm run setup` with `--repair`.
 
-1. Clone: `git clone https://github.com/loganrenz/narduk-nuxt-template.git my-app && cd my-app`
+1. Clone: `git clone https://github.com/narduk-enterprises/narduk-nuxt-template.git my-app && cd my-app`
 2. Clear the template's git history and set up your own repository (Required for GitHub CI secrets to bind properly):
    ```bash
    rm -rf .git
@@ -263,7 +263,7 @@ Follow these steps **in order** — the init script handles renaming, D1 provisi
 
 ## 🚨 CRITICAL RULE: NEVER COMMIT TO THIS REPOSITORY 🚨
 
-If you are an agent building a new project inside a clone of this repository, **DO NOT COMMIT OR PUSH** directly back to `loganrenz/narduk-nuxt-template`. Verify the user has set up a new remote origin first.
+If you are an agent building a new project inside a clone of this repository, **DO NOT COMMIT OR PUSH** directly back to `narduk-enterprises/narduk-nuxt-template`. Verify the user has set up a new remote origin first.
 
 ## 🚨 ZERO ERRORS & WARNINGS POLICY 🚨
 

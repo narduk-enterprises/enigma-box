@@ -11,7 +11,7 @@ Welcome! This guide helps you get up and running with the **Nuxt 4 + Nuxt UI 4 E
 ## Quick Start
 
 ```bash
-git clone https://github.com/loganrenz/enigma-box.git my-project
+git clone https://github.com/narduk-enterprises/enigma-box.git my-project
 cd my-project
 pnpm install
 pnpm run dev          # Starts apps/web with hot reload

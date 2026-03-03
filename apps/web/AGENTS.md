@@ -1,6 +1,6 @@
 # AGENTS.md — apps/web
 
-This is the **main application**. It extends `@loganrenz/narduk-nuxt-template-layer` (the shared Nuxt Layer) and is deployed as a Cloudflare Worker.
+This is the **main application**. It extends `@narduk-enterprises/narduk-nuxt-template-layer` (the shared Nuxt Layer) and is deployed as a Cloudflare Worker.
 
 ## Key Rules
 

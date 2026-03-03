@@ -85,7 +85,7 @@ All migration work happens in `/tmp` to keep `~/code` clean.
 1. Clone the source repo and the template into `/tmp`:
    ```bash
    git clone ~/code/<source> /tmp/<source>
-   git clone https://github.com/loganrenz/narduk-nuxt-template.git /tmp/<project-name>-v2
+   git clone https://github.com/narduk-enterprises/narduk-nuxt-template.git /tmp/<project-name>-v2
    cd /tmp/<project-name>-v2
    rm -rf .git
    git init && git add . && git commit -m "chore: scaffold from narduk-nuxt-template"
@@ -358,7 +358,7 @@ Add any `r2_buckets` bindings if the source app had them.
 | `PostCSS warning: @import must precede all other rules` | CSS import ordering               | Move `@import` statements to top of CSS file, or use `app.head.link` |
 | `vue-official/no-setup-top-level-side-effects`          | Side effects in `<script setup>`  | Move `setInterval`, `setTimeout`, etc. into `onMounted()`            |
 | `unicorn/prefer-number-properties`                      | Raw `parseFloat`/`parseInt`       | Use `Number.parseFloat()` / `Number.parseInt()`                      |
-| `Cannot find module '@loganrenz/...'`                   | Workspace link broken             | Run `pnpm install` from repo root                                    |
+| `Cannot find module '@narduk-enterprises/...'`                   | Workspace link broken             | Run `pnpm install` from repo root                                    |
 | `No D1 database binding`                                | Missing `wrangler.json` config    | Add `d1_databases` array with correct `database_id`                  |
 | `CSRF token rejected`                                   | Missing `X-Requested-With` header | Ensure layer's `fetch.client.ts` plugin is active (not shadowed)     |
 
@@ -398,7 +398,7 @@ Once the migration is fully verified and the new monorepo app is working as expe
 
    ```bash
    cd ~/code/<project-name>
-   git remote add origin https://github.com/loganrenz/<project-name>.git
+   git remote add origin https://github.com/narduk-enterprises/<project-name>.git
    git branch -M main
    git push -u origin main --force
    ```
