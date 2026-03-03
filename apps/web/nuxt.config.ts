@@ -30,7 +30,7 @@ export default defineNuxtConfig({
     gaPropertyId: process.env.GA_PROPERTY_ID || '',
     posthogProjectId: process.env.POSTHOG_PROJECT_ID || '',
     public: {
-      appUrl: process.env.SITE_URL || 'https://narduk.workers.dev',
+      appUrl: process.env.SITE_URL || 'https://enigma-box.nard.uk',
       appName: process.env.APP_NAME || 'EnigmaBox',
       // Analytics
       posthogPublicKey: process.env.POSTHOG_PUBLIC_KEY || '',
@@ -43,7 +43,7 @@ export default defineNuxtConfig({
   },
 
   site: {
-    url: process.env.SITE_URL || 'https://narduk.workers.dev',
+    url: process.env.SITE_URL || 'https://enigma-box.nard.uk',
     name: 'EnigmaBox',
     description: 'EnigmaBox — powered by Nuxt 4 and Cloudflare Workers.',
     defaultLocale: 'en',
@@ -53,14 +53,14 @@ export default defineNuxtConfig({
     identity: {
       type: 'Organization',
       name: 'EnigmaBox',
-      url: process.env.SITE_URL || 'https://narduk.workers.dev',
+      url: process.env.SITE_URL || 'https://enigma-box.nard.uk',
       logo: '/favicon.svg',
     },
   },
 
   image: {
     cloudflare: {
-      baseURL: process.env.SITE_URL || 'https://narduk.workers.dev',
+      baseURL: process.env.SITE_URL || 'https://enigma-box.nard.uk',
     },
   },
 
