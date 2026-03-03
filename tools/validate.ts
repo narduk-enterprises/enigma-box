@@ -34,7 +34,7 @@ async function main() {
   const APP_NAME = packageJson.name
 
   let allGood = true
-  if (!APP_NAME || APP_NAME.includes('enigma-box')) {
+  if (!APP_NAME || APP_NAME.includes('narduk-nuxt-template')) {
     console.error(`  ❌ Project name is still '${APP_NAME}'. Has init been run?`)
     allGood = false
   }
@@ -42,7 +42,7 @@ async function main() {
   console.log(`\n🔍 Validating Setup for: ${APP_NAME}`)
 
   // 1. Check D1 Databases (reads database_name from each app's wrangler.json)
-  console.log('\nStep 1/4: Validating D1 Databases...')
+  console.log('\nStep 1/5: Validating D1 Databases...')
   try {
     const appsDir = path.join(ROOT_DIR, 'apps')
     const entries = await fs.readdir(appsDir, { withFileTypes: true })
@@ -78,7 +78,7 @@ async function main() {
   }
 
   // 2. Check wrangler.json database_id values
-  console.log('\nStep 2/4: Validating wrangler.json database IDs...')
+  console.log('\nStep 2/5: Validating wrangler.json database IDs...')
   try {
     const appsDir = path.join(ROOT_DIR, 'apps')
     const entries = await fs.readdir(appsDir, { withFileTypes: true })
@@ -117,41 +117,84 @@ async function main() {
   }
 
   // 3. Doppler
-  console.log('\nStep 3/4: Validating Doppler Configuration...')
-  allGood = checkCommand(
+  console.log('\nStep 3/5: Validating Doppler Configuration...')
+  let dopplerOk = true
+  dopplerOk = checkCommand(
     `doppler projects get ${APP_NAME}`,
     `Doppler project ${APP_NAME} exists.`,
     `Doppler project ${APP_NAME} not found`
-  ) && allGood
+  )
+  if (!dopplerOk) allGood = false
 
-  try {
-    // Check if expected secrets exist
-    const output = execSync(
-      `doppler secrets --project ${APP_NAME} --config prd --only-names --plain`,
-      { encoding: 'utf-8', stdio: 'pipe' }
-    )
-    const existing = new Set(output.trim().split('\n').filter(Boolean))
-    const requiredSecrets = ['CLOUDFLARE_API_TOKEN', 'APP_NAME']
-    
-    const missing = requiredSecrets.filter(s => !existing.has(s))
-    if (missing.length === 0) {
-      console.log(`  ✅ Core Doppler secrets are present.`)
-    } else {
-      console.error(`  ❌ Missing Doppler secrets: ${missing.join(', ')}`)
+  if (dopplerOk) {
+    try {
+      const output = execSync(
+        `doppler secrets --project ${APP_NAME} --config prd --only-names --plain`,
+        { encoding: 'utf-8', stdio: 'pipe' }
+      )
+      const existing = new Set(output.trim().split('\n').filter(Boolean))
+      const requiredSecrets = ['CLOUDFLARE_API_TOKEN', 'CLOUDFLARE_ACCOUNT_ID', 'APP_NAME', 'SITE_URL']
+
+      const missing = requiredSecrets.filter(s => !existing.has(s))
+      if (missing.length === 0) {
+        console.log(`  ✅ Core Doppler secrets are present.`)
+      } else {
+        console.error(`  ❌ Missing Doppler secrets: ${missing.join(', ')}`)
+        allGood = false
+      }
+    } catch {
+      console.error('  ❌ Failed to fetch Doppler secrets.')
       allGood = false
     }
-  } catch {
-    console.error('  ❌ Failed to fetch Doppler secrets.')
-    allGood = false
+  }
+
+  // 3b. Verify hub-and-spoke references resolve correctly
+  console.log('\nStep 3b/5: Validating Doppler Hub References...')
+  if (!dopplerOk) {
+    console.log('  ⏭ Skipping (Doppler project not found).')
+  } else {
+    const hubChecks: Array<{ key: string, hub: string, config: string }> = [
+      { key: 'CLOUDFLARE_API_TOKEN', hub: 'narduk-nuxt-template', config: 'prd' },
+      { key: 'CLOUDFLARE_ACCOUNT_ID', hub: 'narduk-nuxt-template', config: 'prd' },
+      { key: 'POSTHOG_PUBLIC_KEY', hub: 'narduk-analytics', config: 'prd' },
+    ]
+
+    for (const { key, hub, config } of hubChecks) {
+      try {
+        const hubJson = execSync(
+          `doppler secrets get ${key} --project ${hub} --config ${config} --json`,
+          { encoding: 'utf-8', stdio: 'pipe' }
+        )
+        const hubValue = JSON.parse(hubJson)[key]?.computed || ''
+
+        const spokeJson = execSync(
+          `doppler secrets get ${key} --project ${APP_NAME} --config prd --json`,
+          { encoding: 'utf-8', stdio: 'pipe' }
+        )
+        const spokeValue = JSON.parse(spokeJson)[key]?.computed || ''
+
+        if (!spokeValue) {
+          console.error(`  ❌ ${key} — not set in ${APP_NAME}/prd`)
+          allGood = false
+        } else if (spokeValue === hubValue) {
+          console.log(`  ✅ ${key} — matches hub (${hub})`)
+        } else {
+          console.error(`  ❌ ${key} — STALE: does not match hub (${hub}). Run sync-template to fix.`)
+          allGood = false
+        }
+      } catch {
+        console.warn(`  ⚠️ ${key} — could not verify (hub or spoke unavailable)`)
+      }
+    }
   }
 
   // 4. GitHub Secret
-  console.log('\nStep 4/4: Validating GitHub Secrets...')
+  console.log('\nStep 4/5: Validating GitHub Secrets...')
   let targetRepoFlag = ''
   try {
     const remotesOutput = execSync('git remote -v', { encoding: 'utf-8', stdio: 'pipe' })
     const remotes = remotesOutput.split('\n').filter(Boolean)
-    const targetRemoteLine = remotes.find(line => !line.includes('enigma-box') && line.includes('(push)'))
+    const targetRemoteLine = remotes.find(line => !line.includes('narduk-nuxt-template') && line.includes('(push)'))
     if (targetRemoteLine) {
       let url = targetRemoteLine.split(/\s+/)[1]
       url = url.replace(/^(https?:\/\/|git@)/, '').replace(/^github\.com[:/]/, '').replace(/\.git$/, '')
