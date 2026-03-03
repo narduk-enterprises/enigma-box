@@ -23,8 +23,10 @@ describe('safeParseHints', () => {
   })
 
   it('returns null for non-array JSON', () => {
-    // safeParseHints returns the parsed value even if it's not an array
-    // The function trusts the database schema; this test documents current behavior
-    expect(safeParseHints('"just a string"')).toBe('just a string')
+    expect(safeParseHints('"just a string"')).toBeNull()
+  })
+
+  it('returns null for JSON object', () => {
+    expect(safeParseHints('{"key":"value"}')).toBeNull()
   })
 })
