@@ -87,11 +87,11 @@ const DOPPLER_AVAILABLE = isDopplerAvailable()
 // published identity shared across all consuming apps. We match it first
 // (identity replacement) so the generic `narduk-nuxt-template` pattern below
 // cannot corrupt it.
-const LAYER_PACKAGE = '@loganrenz/narduk-nuxt-template-layer'
+const LAYER_PACKAGE = '@narduk-enterprises/narduk-nuxt-template-layer'
 const LAYER_PACKAGE_PLACEHOLDER = '__LAYER_PKG_PLACEHOLDER__'
 const REPLACEMENTS = [
   // 1. Temporarily replace the protected layer package name with a safe placeholder
-  { from: /@loganrenz\/narduk-nuxt-template-layer/g, to: LAYER_PACKAGE_PLACEHOLDER },
+  { from: /@narduk-enterprises\/narduk-nuxt-template-layer/g, to: LAYER_PACKAGE_PLACEHOLDER },
   
   // 2. Perform all standard project renames
   { from: /narduk-nuxt-template-examples-db/g, to: `${APP_NAME}-examples-db` },
