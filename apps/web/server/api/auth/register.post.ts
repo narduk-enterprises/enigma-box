@@ -15,10 +15,12 @@ export default defineEventHandler(async (event) => {
   try {
     await enforceRateLimit(event, 'auth', 10, 60_000)
 
-    const body = await readBody(event).catch(() => ({}))
+    const body = await readBody(event).catch(() => {
+      throw createError({ statusCode: 400, message: 'Invalid request body' })
+    })
     const parsed = bodySchema.safeParse(body)
     if (!parsed.success) {
-      throw createError({ statusCode: 400, message: parsed.error?.message ?? 'Invalid input' })
+      throw createError({ statusCode: 400, message: parsed.error.issues[0]?.message ?? 'Invalid input' })
     }
 
     const { email, password, name } = parsed.data

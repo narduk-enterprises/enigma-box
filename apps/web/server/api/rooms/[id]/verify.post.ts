@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { puzzles, gameSessions } from '#server/database/schema'
 import { useAppDatabase } from '#server/utils/database'
 import { verifyAnswer } from '#server/utils/auth'
+import { safeParseHints } from '#server/utils/parse'
 import { enforceRateLimit } from '#layer/server/utils/rateLimit'
 import { eq, asc } from 'drizzle-orm'
 
@@ -14,10 +15,12 @@ export default defineEventHandler(async (event) => {
   await enforceRateLimit(event, 'api', 30, 60_000)
 
   const id = getRouterParam(event, 'id')
-  const body = await readBody(event).catch(() => ({}))
+  const body = await readBody(event).catch(() => {
+    throw createError({ statusCode: 400, message: 'Invalid request body' })
+  })
   const parsed = bodySchema.safeParse(body)
   if (!id || !parsed.success) {
-    throw createError({ statusCode: 400, message: parsed.error?.message ?? 'Room id and sessionId required' })
+    throw createError({ statusCode: 400, message: parsed.error?.issues[0]?.message ?? 'Invalid input' })
   }
 
   const { answer, sessionId } = parsed.data
@@ -67,7 +70,7 @@ export default defineEventHandler(async (event) => {
         sequenceOrder: nextPuzzle.sequenceOrder,
         puzzleType: nextPuzzle.puzzleType,
         content: nextPuzzle.content,
-        hints: nextPuzzle.hints ? (JSON.parse(nextPuzzle.hints) as string[]) : null,
+        hints: safeParseHints(nextPuzzle.hints),
       },
     }
   }

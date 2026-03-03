@@ -62,7 +62,7 @@ export async function kvGet<T = unknown>(event: H3Event, key: string, bindingNam
   try {
     return JSON.parse(raw) as T
   } catch {
-    return raw as unknown as T
+    return null
   }
 }
 

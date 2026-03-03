@@ -105,6 +105,8 @@ function copyPlayLink() {
     navigator.clipboard.writeText(url).then(() => {
       copyLinkDone.value = true
       setTimeout(() => { copyLinkDone.value = false }, 2000)
+    }).catch(() => {
+      // Clipboard API may be unavailable in insecure contexts
     })
   }
 }

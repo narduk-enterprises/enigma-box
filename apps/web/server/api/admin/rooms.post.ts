@@ -14,10 +14,12 @@ export default defineEventHandler(async (event) => {
   const user = await requireAuth(event)
   const db = useAppDatabase(event)
 
-  const body = await readBody(event).catch(() => ({}))
+  const body = await readBody(event).catch(() => {
+    throw createError({ statusCode: 400, message: 'Invalid request body' })
+  })
   const parsed = bodySchema.safeParse(body)
   if (!parsed.success) {
-    throw createError({ statusCode: 400, message: parsed.error.message })
+    throw createError({ statusCode: 400, message: parsed.error.issues[0]?.message ?? 'Invalid input' })
   }
 
   const id = crypto.randomUUID()

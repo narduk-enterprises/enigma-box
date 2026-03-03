@@ -1,6 +1,7 @@
 import { rooms, puzzles, type Puzzle } from '#server/database/schema'
 import { useAppDatabase } from '#server/utils/database'
 import { requireAuth } from '#server/utils/auth'
+import { safeParseHints } from '#server/utils/parse'
 import { eq, asc } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
@@ -22,7 +23,7 @@ export default defineEventHandler(async (event) => {
     sequenceOrder: p.sequenceOrder,
     puzzleType: p.puzzleType,
     content: p.content,
-    hints: p.hints ? (JSON.parse(p.hints) as string[]) : null,
+    hints: safeParseHints(p.hints),
   }))
 
   return {

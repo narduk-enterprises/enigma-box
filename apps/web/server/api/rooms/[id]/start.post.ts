@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { rooms, puzzles, gameSessions } from '#server/database/schema'
 import { useAppDatabase } from '#server/utils/database'
+import { safeParseHints } from '#server/utils/parse'
 import { enforceRateLimit } from '#layer/server/utils/rateLimit'
 import { eq, asc } from 'drizzle-orm'
 
@@ -20,10 +21,12 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: 'Room id required' })
   }
 
-  const body = await readBody(event).catch(() => ({}))
+  const body = await readBody(event).catch(() => {
+    throw createError({ statusCode: 400, message: 'Invalid request body' })
+  })
   const parsed = bodySchema.safeParse(body)
   if (!parsed.success) {
-    throw createError({ statusCode: 400, message: parsed.error.message })
+    throw createError({ statusCode: 400, message: parsed.error.issues[0]?.message ?? 'Invalid input' })
   }
 
   const db = useAppDatabase(event)
@@ -58,7 +61,7 @@ export default defineEventHandler(async (event) => {
       sequenceOrder: firstPuzzle.sequenceOrder,
       puzzleType: firstPuzzle.puzzleType,
       content: firstPuzzle.content,
-      hints: firstPuzzle.hints ? (JSON.parse(firstPuzzle.hints) as string[]) : null,
+      hints: safeParseHints(firstPuzzle.hints),
     },
   }
 })

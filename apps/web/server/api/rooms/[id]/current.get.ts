@@ -1,8 +1,12 @@
 import { rooms, puzzles, gameSessions } from '#server/database/schema'
 import { useAppDatabase } from '#server/utils/database'
+import { safeParseHints } from '#server/utils/parse'
+import { enforceRateLimit } from '#layer/server/utils/rateLimit'
 import { eq } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
+  await enforceRateLimit(event, 'api', 60, 60_000)
+
   const id = getRouterParam(event, 'id')
   const sessionId = getHeader(event, 'x-game-session')
   if (!id || !sessionId) {
@@ -43,7 +47,7 @@ export default defineEventHandler(async (event) => {
       sequenceOrder: puzzle.sequenceOrder,
       puzzleType: puzzle.puzzleType,
       content: puzzle.content,
-      hints: puzzle.hints ? (JSON.parse(puzzle.hints) as string[]) : null,
+      hints: safeParseHints(puzzle.hints),
     },
   }
 })
