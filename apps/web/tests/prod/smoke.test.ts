@@ -3,12 +3,12 @@
  *
  * Usage:
  *   pnpm run test:prod
- *   ENIGMA_BOX_BASE_URL=https://enigma-box.narduk.workers.dev pnpm run test:prod
+ *   ENIGMA_BOX_BASE_URL=https://enigma-box.nard.uk pnpm run test:prod
  */
 
 import { describe, it, expect } from 'vitest'
 
-const BASE_URL = process.env.ENIGMA_BOX_BASE_URL ?? 'https://enigma-box.narduk.workers.dev'
+const BASE_URL = process.env.ENIGMA_BOX_BASE_URL ?? 'https://enigma-box.nard.uk'
 const CSRF_HEADERS = { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
 
 function parseSetCookie(header: string | null): string {

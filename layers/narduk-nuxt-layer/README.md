@@ -12,7 +12,7 @@ This is the centralized source of truth for **Nuxt 4**, the aesthetics of **Nuxt
 | **Plugins**             | `gtag.client.ts`, `posthog.client.ts`, `fetch.client.ts` (CSRF header injection)                  |
 | **Server Middleware**   | `cors.ts`, `csrf.ts`, `d1.ts` (database binding), `indexnow.ts`, `securityHeaders.ts`             |
 | **Server Utils**        | `database.ts`, `rateLimit.ts`, `auth.ts` (includes `requireAdmin`), `kv.ts`, `r2.ts`, `google.ts` |
-| **Server API Routes**   | `/api/health`, `/api/indexnow/submit`, `/api/admin/ga/overview`, `/api/admin/gsc/performance`     |
+| **Server API Routes**   | `/api/health`, `/api/indexnow/submit`, `/api/admin/indexing/*`, `/api/admin/ga/overview`, `/api/admin/gsc/performance`     |
 | **Database Schema**     | Base schema in `server/database/schema.ts`                                                        |
 | **CSS / Design Tokens** | `main.css` with `@theme` tokens, utility classes (`.glass`, `.card-base`, etc.)                   |
 | **Types**               | Shared TypeScript interfaces in `app/types/`                                                      |

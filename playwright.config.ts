@@ -30,7 +30,7 @@ export default defineConfig({
       testDir: 'apps/web/tests/e2e',
       use: {
         ...devices['Desktop Chrome'],
-        baseURL: process.env.ENIGMA_BOX_BASE_URL ?? 'https://enigma-box.narduk.workers.dev',
+        baseURL: process.env.ENIGMA_BOX_BASE_URL ?? 'https://enigma-box.nard.uk',
       },
     },
   ],

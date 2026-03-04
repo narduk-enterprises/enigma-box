@@ -162,7 +162,7 @@ The following settings are provided by this layer's `nuxt.config.ts`. Downstream
 
 - `server/middleware/` — cors, csrf, d1, indexnow, securityHeaders
 - `server/utils/` — auth, database, google, kv, r2, rateLimit
-- `server/api/` — health.get, indexnow/submit.post, admin/ga/overview.get, admin/gsc/performance.get
+- `server/api/` — health.get, indexnow/submit.post, admin/indexing/* (batch.post, publish.post, status.get), admin/ga/overview.get, admin/gsc/performance.get
 - `server/database/schema.ts` — Base Drizzle schema
 - `server/routes/cdn-cgi/image/[...path].ts` — Image transform proxy
 

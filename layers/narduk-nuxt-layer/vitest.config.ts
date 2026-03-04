@@ -1,3 +1,8 @@
-import { defineVitestConfig } from '@nuxt/test-utils/config';
+import { defineConfig } from 'vitest/config';
 
-export default defineVitestConfig({});
+export default defineConfig({
+  test: {
+    // Server-only unit tests — no Nuxt/Vue runtime needed
+    include: ['tests/**/*.test.ts'],
+  },
+});

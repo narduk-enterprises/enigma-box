@@ -2,7 +2,7 @@
 
 ## 1. Did `pnpm setup` complete smoothly?
 
-**Yes.** The setup script (`pnpm run setup -- --name="enigma-box" --display="EnigmaBox" --url="https://enigma-box.narduk.workers.dev"`) completed successfully and non-interactively. It:
+**Yes.** The setup script (`pnpm run setup -- --name="enigma-box" --display="EnigmaBox" --url="https://enigma-box.nard.uk"`) completed successfully and non-interactively. It:
 
 - Replaced boilerplate strings in 18 files and 4 markdown files
 - Provisioned D1 (`enigma-box-db`) and updated `wrangler.json`

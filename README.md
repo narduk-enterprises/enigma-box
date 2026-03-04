@@ -3,7 +3,7 @@
 **enigma-box** — initialized from `narduk-nuxt-template`.
 
 ## Live Site
-[https://enigma-box.narduk.workers.dev](https://enigma-box.narduk.workers.dev)
+[https://enigma-box.nard.uk](https://enigma-box.nard.uk)
 
 ## Local Development
 
