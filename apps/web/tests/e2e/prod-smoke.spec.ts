@@ -1,7 +1,7 @@
 /**
  * E2E smoke tests for production. Run with:
  *   pnpm test:e2e --project=prod
- *   ENIGMA_BOX_BASE_URL=https://enigma-box.narduk.workers.dev pnpm test:e2e --project=prod
+ *   ENIGMA_BOX_BASE_URL=https://enigma-box.nard.uk pnpm test:e2e --project=prod
  *
  * No local server is started; the prod project uses the deployed base URL.
  */
