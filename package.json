@@ -25,7 +25,8 @@
     "generate:favicons": "npx tsx tools/generate-favicons.ts",
     "predev": "node tools/check-setup.cjs",
     "prebuild": "node tools/check-setup.cjs",
-    "predeploy": "node tools/check-setup.cjs"
+    "predeploy": "node tools/check-setup.cjs",
+    "postinstall": "node -e \"if(!require('fs').existsSync('.setup-complete'))console.log('\\n⚠️  Run pnpm run setup before doing anything else! See AGENTS.md.\\n')\""
   },
   "pnpm": {
     "overrides": {
