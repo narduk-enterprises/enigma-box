@@ -2,6 +2,7 @@
 import { z } from 'zod'
 
 useSeo({
+  robots: 'noindex',
   title: 'Log in — EnigmaBox',
   description: 'Log in to EnigmaBox to create and manage your escape rooms.',
 })
