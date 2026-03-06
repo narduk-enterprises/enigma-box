@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { rooms } from '#server/database/schema'
 import { useAppDatabase } from '#server/utils/database'
-import { requireAuth } from '../../utils/auth'
+import { requireAuth } from '#layer/server/utils/auth'
 import { enforceRateLimit } from '#layer/server/utils/rateLimit'
 
 const bodySchema = z.object({

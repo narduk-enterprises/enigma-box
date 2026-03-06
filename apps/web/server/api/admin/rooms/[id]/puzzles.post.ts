@@ -1,7 +1,8 @@
 import { z } from 'zod'
 import { rooms, puzzles } from '#server/database/schema'
 import { useAppDatabase } from '#server/utils/database'
-import { requireAuth, hashAnswer } from '#server/utils/auth'
+import { requireAuth } from '#layer/server/utils/auth'
+import { hashAnswer } from '#server/utils/puzzle'
 import { enforceRateLimit } from '#layer/server/utils/rateLimit'
 import { eq } from 'drizzle-orm'
 

@@ -1,6 +1,6 @@
 import { rooms, type Room } from '#server/database/schema'
 import { useAppDatabase } from '#server/utils/database'
-import { requireAuth } from '#server/utils/auth'
+import { requireAuth } from '#layer/server/utils/auth'
 import { eq } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {

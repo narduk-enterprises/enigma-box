@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { puzzles, gameSessions } from '#server/database/schema'
 import { useAppDatabase } from '#server/utils/database'
-import { verifyAnswer } from '#server/utils/auth'
+import { verifyAnswer } from '#server/utils/puzzle'
 import { enforceRateLimit } from '#layer/server/utils/rateLimit'
 import { eq, asc } from 'drizzle-orm'
 

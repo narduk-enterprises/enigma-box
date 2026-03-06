@@ -1,6 +1,6 @@
 /**
  * Generates apps/web/drizzle/seed_rooms.sql from apps/web/drizzle/seed-data.json.
- * Answer hashes match server/utils/auth.ts (SHA-256 of trim+lowercase).
+ * Answer hashes match server/utils/puzzle.ts (SHA-256 of trim+lowercase).
  *
  * Run: pnpm exec tsx tools/seed-enigma.ts
  * Then: wrangler d1 execute enigma-box-db --local --file=apps/web/drizzle/seed_rooms.sql
