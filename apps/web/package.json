@@ -2,7 +2,7 @@
   "name": "web",
   "type": "module",
   "private": true,
-  "version": "1.9.12",
+  "version": "1.9.13",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
