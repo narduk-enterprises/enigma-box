@@ -29,7 +29,8 @@
     "postinstall": "node -e \"if(!require('fs').existsSync('.setup-complete'))console.log('\\n⚠️  Run pnpm run setup before doing anything else! See AGENTS.md.\\n')\"",
     "predeploy": "node tools/check-setup.cjs",
     "format": "prettier --write \"**/*.{ts,mts,vue,js,mjs,json,yaml,yml,css,md}\" --ignore-path .gitignore",
-    "format:check": "prettier --check \"**/*.{ts,mts,vue,js,mjs,json,yaml,yml,css,md}\" --ignore-path .gitignore"
+    "format:check": "prettier --check \"**/*.{ts,mts,vue,js,mjs,json,yaml,yml,css,md}\" --ignore-path .gitignore",
+    "tail": "npx tsx tools/tail.ts"
   },
   "pnpm": {
     "overrides": {
