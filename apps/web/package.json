@@ -16,7 +16,8 @@
     "deploy": "nuxt build && wrangler deploy",
     "prelint": "test -f .nuxt/eslint.config.mjs || nuxt prepare",
     "lint": "eslint . --max-warnings 0",
-    "test:prod": "vitest run tests/prod"
+    "test:prod": "vitest run tests/prod",
+    "quality": "echo 'Turbo dependsOn handles lint + typecheck + format:check'"
   },
   "dependencies": {
     "@narduk-enterprises/narduk-nuxt-template-layer": "workspace:*",
