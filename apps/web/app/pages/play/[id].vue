@@ -99,13 +99,16 @@ async function submitAnswer() {
   }
 }
 
-function copyPlayLink() {
+async function copyPlayLink() {
   const url = typeof window !== 'undefined' ? `${window.location.origin}/play/${roomId}` : ''
   if (url && typeof navigator !== 'undefined' && navigator.clipboard) {
-    navigator.clipboard.writeText(url).then(() => {
+    try {
+      await navigator.clipboard.writeText(url)
       copyLinkDone.value = true
       setTimeout(() => { copyLinkDone.value = false }, 2000)
-    })
+    } catch {
+      // Clipboard API may be unavailable (e.g., insecure context or denied permission); fail silently
+    }
   }
 }
 </script>
