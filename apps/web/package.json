@@ -6,7 +6,7 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
-    "db:migrate": "wrangler d1 execute enigma-box-db --local --file=drizzle/0000_initial_schema.sql",
+    "db:migrate": "bash ../../tools/db-migrate.sh enigma-box-db --local --dir drizzle",
     "db:seed": "wrangler d1 execute enigma-box-db --local --file=node_modules/@narduk-enterprises/narduk-nuxt-template-layer/drizzle/seed.sql && wrangler d1 execute enigma-box-db --local --file=drizzle/seed_rooms.sql",
     "db:seed:generate": "tsx ../../tools/seed-enigma.ts",
     "db:studio": "drizzle-kit studio",
@@ -17,14 +17,16 @@
     "prelint": "test -f .nuxt/eslint.config.mjs || nuxt prepare",
     "lint": "eslint . --max-warnings 0",
     "test:prod": "vitest run tests/prod",
-    "quality": "echo 'Turbo dependsOn handles lint + typecheck + format:check'"
+    "quality": "echo 'Turbo dependsOn handles lint + typecheck + format:check'",
+    "db:reset": "bash ../../tools/db-migrate.sh enigma-box-db --local --dir drizzle --reset && pnpm run db:seed",
+    "db:ready": "pnpm run db:migrate && pnpm run db:seed"
   },
   "dependencies": {
     "@narduk-enterprises/narduk-nuxt-template-layer": "workspace:*",
-    "@narduk/eslint-config": "workspace:*",
     "drizzle-orm": "^0.45.1",
     "nuxt": "^4.3.1",
-    "zod": "^4.3.6"
+    "zod": "^4.3.6",
+    "@narduk-enterprises/eslint-config": "^1.0.11"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260226.1",
