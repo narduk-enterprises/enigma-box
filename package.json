@@ -32,7 +32,8 @@
     "format:check": "prettier --check \"**/*.{ts,mts,vue,js,mjs,json,yaml,yml,css,md}\" --ignore-path .gitignore",
     "tail": "npx tsx tools/tail.ts",
     "check:sync-health": "npx tsx tools/check-sync-health.ts",
-    "quality:fix": "turbo run lint --force -- --fix && pnpm run format"
+    "quality:fix": "turbo run lint --force -- --fix && pnpm run format",
+    "sync-template": "npx tsx tools/sync-template.ts ."
   },
   "pnpm": {
     "overrides": {
