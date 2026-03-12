@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260226.1",
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/vite": "^4.0.0",
     "eslint": "^10.0.2",
     "nitro-cloudflare-dev": "^0.2.2",
